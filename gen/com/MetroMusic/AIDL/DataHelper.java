@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: F:\\Java\\AndroidEclipse\\MetroMusic\\src\\com\\MetroMusic\\AIDL\\DataHelper.aidl
+ * Original file: /Users/Coffee/Code/Eclipseworkspace/Metro-Music-for-Android/src/com/MetroMusic/AIDL/DataHelper.aidl
  */
 package com.MetroMusic.AIDL;
 public interface DataHelper extends android.os.IInterface

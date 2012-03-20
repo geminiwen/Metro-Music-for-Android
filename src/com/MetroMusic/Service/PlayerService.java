@@ -73,12 +73,6 @@ public class PlayerService extends Service implements OnCompletionListener,OnPre
 		}
 
 		@Override
-		public boolean songIsLoad() throws RemoteException {
-			// TODO Auto-generated method stub
-			return isLoad;
-		}
-
-		@Override
 		public boolean songIsPlaying() throws RemoteException {
 			// TODO Auto-generated method stub
 			return musicPlayer.isPlaying();

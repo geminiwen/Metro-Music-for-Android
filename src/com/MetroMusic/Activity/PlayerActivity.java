@@ -43,7 +43,6 @@ public class PlayerActivity extends Activity{
 
 	/* UIs  */
 	private Button	playButton;
-	private Button	prevButton;
 	private Button	nextButton;
 	private Button	settingButton;
 	private ProgressBar waitProgressBar;
@@ -87,11 +86,15 @@ public class PlayerActivity extends Activity{
 			case PlayerState.WAIT:
 			{
 				waitProgressBar.setVisibility(View.VISIBLE);
+				playButton.setEnabled(false);
+				nextButton.setEnabled(false);
 				break;
 			}
 			case PlayerState.READY:
 			{
 				waitProgressBar.setVisibility(View.GONE);
+				playButton.setEnabled(true);
+				nextButton.setEnabled(true);
 				break;
 			}
 			case PlayerState.PROGRESS_MAX:
@@ -229,7 +232,6 @@ public class PlayerActivity extends Activity{
 		setContentView(R.layout.player);
 		
 		this.playButton 		= (Button)findViewById(R.id.playbtn);
-		this.prevButton 		= (Button)findViewById(R.id.prevbtn);
 		this.nextButton 		= (Button)findViewById(R.id.nextbtn);
 		this.settingButton		= (Button)findViewById(R.id.settingBtn);
 		this.waitProgressBar 	= (ProgressBar)findViewById(R.id.waitProgressBar);

@@ -8,7 +8,6 @@ interface PlayerServiceHelper{
 	void playSong(in Song song);
 	void stopSong();
 	void toogleSong(int toogle);
-	boolean songIsLoad();
 	boolean songIsPlaying();
 
 }

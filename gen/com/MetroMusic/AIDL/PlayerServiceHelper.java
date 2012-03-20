@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: F:\\Java\\AndroidEclipse\\MetroMusic\\src\\com\\MetroMusic\\AIDL\\PlayerServiceHelper.aidl
+ * Original file: /Users/Coffee/Code/Eclipseworkspace/Metro-Music-for-Android/src/com/MetroMusic/AIDL/PlayerServiceHelper.aidl
  */
 package com.MetroMusic.AIDL;
 public interface PlayerServiceHelper extends android.os.IInterface
@@ -88,14 +88,6 @@ int _arg0;
 _arg0 = data.readInt();
 this.toogleSong(_arg0);
 reply.writeNoException();
-return true;
-}
-case TRANSACTION_songIsLoad:
-{
-data.enforceInterface(DESCRIPTOR);
-boolean _result = this.songIsLoad();
-reply.writeNoException();
-reply.writeInt(((_result)?(1):(0)));
 return true;
 }
 case TRANSACTION_songIsPlaying:
@@ -204,23 +196,6 @@ _reply.recycle();
 _data.recycle();
 }
 }
-public boolean songIsLoad() throws android.os.RemoteException
-{
-android.os.Parcel _data = android.os.Parcel.obtain();
-android.os.Parcel _reply = android.os.Parcel.obtain();
-boolean _result;
-try {
-_data.writeInterfaceToken(DESCRIPTOR);
-mRemote.transact(Stub.TRANSACTION_songIsLoad, _data, _reply, 0);
-_reply.readException();
-_result = (0!=_reply.readInt());
-}
-finally {
-_reply.recycle();
-_data.recycle();
-}
-return _result;
-}
 public boolean songIsPlaying() throws android.os.RemoteException
 {
 android.os.Parcel _data = android.os.Parcel.obtain();
@@ -244,14 +219,12 @@ static final int TRANSACTION_setPlayerUIHelper = (android.os.IBinder.FIRST_CALL_
 static final int TRANSACTION_playSong = (android.os.IBinder.FIRST_CALL_TRANSACTION + 2);
 static final int TRANSACTION_stopSong = (android.os.IBinder.FIRST_CALL_TRANSACTION + 3);
 static final int TRANSACTION_toogleSong = (android.os.IBinder.FIRST_CALL_TRANSACTION + 4);
-static final int TRANSACTION_songIsLoad = (android.os.IBinder.FIRST_CALL_TRANSACTION + 5);
-static final int TRANSACTION_songIsPlaying = (android.os.IBinder.FIRST_CALL_TRANSACTION + 6);
+static final int TRANSACTION_songIsPlaying = (android.os.IBinder.FIRST_CALL_TRANSACTION + 5);
 }
 public void setDataHelper(com.MetroMusic.AIDL.DataHelper helper) throws android.os.RemoteException;
 public void setPlayerUIHelper(com.MetroMusic.AIDL.PlayerUIHelper helper) throws android.os.RemoteException;
 public void playSong(com.MetroMusic.Data.Song song) throws android.os.RemoteException;
 public void stopSong() throws android.os.RemoteException;
 public void toogleSong(int toogle) throws android.os.RemoteException;
-public boolean songIsLoad() throws android.os.RemoteException;
 public boolean songIsPlaying() throws android.os.RemoteException;
 }

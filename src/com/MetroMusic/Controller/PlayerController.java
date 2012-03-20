@@ -49,8 +49,6 @@ public class PlayerController {
 	private OnStartClickListener startListener = new OnStartClickListener();
 	private OnPauseClickListener pauseListener = new OnPauseClickListener();
 	
-	private Boolean isPreparing = false;
-	private Boolean causeByNext = false;
 	
 	public PlayerController(PlayerActivity playerActivity)
 	{
@@ -171,16 +169,13 @@ public class PlayerController {
 		systemHandler.sendMessage(msg);
 	}
 	
-	private void loadNewSong()
+	private synchronized void loadNewSong()
 	{
 		new Thread(new Runnable()
 		{
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				synchronized(isPreparing)
-				{
-					isPreparing = true;
 					Song song = null;
 					playerMessageHandler(PlayerState.WAIT);
 					try {
@@ -203,14 +198,8 @@ public class PlayerController {
 					{
 						systemMessageHandler(SystemState.NET_WORK_ERROR,e.getMessage());
 					}
-					finally
-					{
-						isPreparing = false;
-					}
 					
 				}
-				
-			}
 		}).start();
 	}
 	
@@ -250,7 +239,6 @@ public class PlayerController {
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
-			if(isPreparing) return;
 			if(playerModel.isStop())
 			{
 				loadNewSong();
@@ -276,7 +264,6 @@ public class PlayerController {
 		public void onClick(View v) { 
 			// TODO Auto-generated method stub
 			try {
-				if(!serviceHelper.songIsLoad())return;
 				serviceHelper.toogleSong(PlayerState.PLAY);
 				playerMessageHandler(PlayerState.PAUSE);
 				playerActivity.setOnPlayerClick(startListener);
@@ -298,8 +285,6 @@ public class PlayerController {
 				public void run() {
 					// TODO Auto-generated method stub
 					try {
-						if(!serviceHelper.songIsLoad()|| isPreparing)return;
-						causeByNext = true;
 						serviceHelper.stopSong();
 						songManager.setOperator(Api.OP_SKIP);
 						playerModel.appendHistory(playerModel.getLastSong().getSid(), Api.OP_SKIP);
@@ -307,7 +292,6 @@ public class PlayerController {
 						playerMessageHandler(PlayerState.STOP);
 						playerActivity.setOnPlayerClick(startListener);
 						loadNewSong();
-						causeByNext = false;
 					} catch (RemoteException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -344,9 +328,6 @@ public class PlayerController {
 		@Override
 		public void nextSong() throws RemoteException {
 			// TODO Auto-generated method stub
-			if(causeByNext){
-				return;
-			}
 			songManager.setOperator(Api.OP_END);
 			playerModel.appendHistory(playerModel.getLastSong().getSid(), Api.OP_END);
 			playerModel.setStop(true);
