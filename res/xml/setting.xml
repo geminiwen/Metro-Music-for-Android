@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	android:title="MetroMusic 设置">
+	<PreferenceCategory xmlns:android="http://schemas.android.com/apk/res/android" android:title="账户相关" android:summary="关于账户的设置"> 
+        <com.MetroMusic.preference.LoginPreference android:layout="@layout/prefer_login" android:key="login_prefer" />                
+   </PreferenceCategory>
+   <PreferenceCategory android:summary="私人兆赫" android:key="private_channel" android:title="未登录" android:enabled="false"></PreferenceCategory>
+   <PreferenceCategory android:summary="公共兆赫" android:key="public_channel" android:title="公共兆赫"></PreferenceCategory>
+
+</PreferenceScreen>

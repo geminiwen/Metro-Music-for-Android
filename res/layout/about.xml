@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp" >
+
+        <ImageView
+            android:id="@+id/aboutImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_launcher" >
+        </ImageView>
+        
+        <TextView
+           android:id="@+id/aboutTitle"
+ 	       android:layout_width="wrap_content"
+     	   android:layout_height="wrap_content"
+     	   android:layout_below="@id/aboutImage"
+     	   android:layout_centerHorizontal="true"
+     	   android:text="Metro Music"
+     	   android:textSize="25sp" 
+     	   android:layout_marginTop="30dp"
+        />
+        <TextView 
+           android:layout_width="wrap_content"
+     	   android:layout_height="wrap_content"
+     	   android:layout_toRightOf="@id/aboutTitle"
+     	   android:layout_marginLeft="5dp"
+     	   android:layout_alignBottom="@id/aboutTitle"
+     	   android:text="@string/show_version"
+     	    android:textSize="12sp" 
+            />
+        
+        <TextView
+            android:id="@+id/aboutIntro"
+			android:layout_width="250dp"
+			android:layout_centerHorizontal="true"
+			android:layout_height="wrap_content"
+			android:text="    本软件属于豆瓣FM第三方客户端，一切服务由豆瓣FM提供，豆瓣对音乐服务保留最终的解释权。"
+			android:layout_below="@id/aboutTitle"
+			android:layout_marginTop="10dp"
+			/>
+        <TextView
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="由Coffee Sherk开发"
+            android:layout_below="@id/aboutIntro"
+            android:layout_marginTop="10dp" />
+        
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/backBtn"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="45dp"
+        android:text="返回" />
+
+
+
+</RelativeLayout>
