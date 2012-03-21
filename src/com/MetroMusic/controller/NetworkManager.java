@@ -30,9 +30,11 @@ import com.MetroMusic.http.RequestParams;
 
 public class NetworkManager {
 	private AsyncHttpClient httpClient;
+	private Context			appContext;
 	
 	public NetworkManager(Context context)
 	{
+		appContext = context;
 		httpClient = AsyncHttpClient.getInstance(context);
 	}
 	
@@ -130,12 +132,12 @@ public class NetworkManager {
 		httpClient.connectionClosed();
 	}
 	
-	public void saveCookie(Context context)
+	public void saveCookie()
 	{
 		CookieStore cookieStore = httpClient.getCustomCookieStore();
 		List<Cookie> cookieList = cookieStore.getCookies();
-		String app_name			= context.getResources().getString(R.string.app_name);
-		CookieDAO	 cookieDAO  = new CookieDAO(new DataBaseHelper(context,app_name).getWritableDatabase());
+		String app_name			= appContext.getResources().getString(R.string.app_name);
+		CookieDAO	 cookieDAO  = new CookieDAO(new DataBaseHelper(appContext,app_name).getWritableDatabase());
 		cookieDAO.saveCookie(cookieList);
 		cookieDAO.dbClose();
 	}

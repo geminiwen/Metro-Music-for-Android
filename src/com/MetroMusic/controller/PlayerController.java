@@ -89,17 +89,20 @@ public class PlayerController {
 				playerModel.setStop(false);
 				playerActivity.setOnPlayerClick(pauseListener);
 			}
+			//Application Context
 			appContext			= playerActivity.getApplicationContext();
 			
 			imageManager		= new ImageManager(appContext);
-			userManager		= new UserManager(appContext);
-			songManager		= new SongManager(appContext,playerModel);
+			userManager			= new UserManager(appContext);
+			songManager			= new SongManager(appContext,playerModel);
 			
 			imageManager.setOnDownloadCompletionlistener(new ImageDownLoadCompletionImpl());
 			playerActivity.setOnNextClick(new OnNextClickListener());
-			playerActivity.setOnSettingClick(new SettingButtonClickListenerImpl());
+			playerActivity.setOnSettingClick(new OnSettingButtonClickListenerImpl());
+			
+			//歌曲名字、歌曲时间数据结构
 			songInfomationManager = new SongInfomationManager(playerActivity.getSongInfomationHandler());
-			userManager.setAppContext(appContext);
+			
 			userModel	= userManager.getAutoLoginUserFromDB();
 			initSongManager();
 			SharedPreferences sharedPrefer = playerActivity.getSharedPreferences("CHANNEL", Activity.MODE_PRIVATE);  
@@ -130,20 +133,23 @@ public class PlayerController {
 	{
 		try {
 			songManager.initializeIfNeed();
-			songManager.setOnLoveOperateCompletionListener(new LoveSongOperateCompletion());  
+			songManager.setOnLoveOperateCompletionListener(new LoveSongOperateCompletion());  //初始化红心音乐操作的监听器
+			
 			if( userModel != null )
 			{
 				songManager.addUserCookie(userModel);
 				songManager.changeChannelByName("红心兆赫");
 			}
+			
 		} catch (SQLiteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			systemMessageHandler(SystemState.NET_WORK_ERROR, "数据库加载错误");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			systemMessageHandler(SystemState.NET_WORK_ERROR, "歌曲管理器初始化失败");
-		}	
+			systemMessageHandler(SystemState.NET_WORK_ERROR, "网络I/O错误，歌曲管理器初始化失败");
+		}
 	}
 	
 	public void setPlayHelper(PlayerServiceHelper playHelper) {
@@ -230,7 +236,6 @@ public class PlayerController {
 					{
 						systemMessageHandler(SystemState.NET_WORK_ERROR,e.getMessage());
 					}
-					
 				}
 		}).start();
 	}
@@ -240,15 +245,9 @@ public class PlayerController {
 		this.userModel = (UserModel)bundle.get("loginuser");
 		boolean needLoadNewSong = (Boolean)bundle.get("loadnewsong");
 		boolean newLoginUser	= (Boolean)bundle.get("newloginuser");
-		int	changeChannel	= bundle.getInt("changechannel", -10);
-		if( changeChannel != -10 )
-		{
-			songManager.changeChannelById(changeChannel);
-		}
-		if(newLoginUser)
-		{
-			this.songManager.addUserCookie(userModel);
-		}
+		int	changeChannel		= bundle.getInt("changechannel", -10);
+		if( changeChannel != -10 ) songManager.changeChannelById(changeChannel);
+		if( newLoginUser ) this.songManager.addUserCookie(userModel);
 		if(needLoadNewSong)
 		{
 			try {
@@ -336,7 +335,7 @@ public class PlayerController {
 		
 	}
 	
-	class SettingButtonClickListenerImpl implements View.OnClickListener
+	class OnSettingButtonClickListenerImpl implements View.OnClickListener
 	{
 		@Override
 		public void onClick(View v) {

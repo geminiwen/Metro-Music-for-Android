@@ -19,7 +19,7 @@ import com.MetroMusic.model.UserModel;
 
 public class LoginController {
 	private LoginActivity loginActivity;
-	private UserModel	  userModel,loginUser;
+	private UserModel	  loginUser;
 	private UserManager   userManager;
 	private String 		  captchaCode;
 	private String		  captcha;
@@ -36,12 +36,9 @@ public class LoginController {
 		appContext = loginActivity.getApplicationContext();
 		userManager	= new UserManager(appContext);
 		
-		userModel	= new UserModel();
-		
-		
+		//Initialize the listeners
 		loginActivity.setOnLoginClickListener(new LoginListenerImpl());
 		loginActivity.setOnCaptchaImageClickListener(captchaClickListener);
-		
 		
 		userManager.setAppContext(appContext);
 		userManager.setCaptchaCompeltionListener(new CaptchaLoadCompletion());
@@ -99,6 +96,7 @@ public class LoginController {
 			String msg = "success";
 			try{
 				loginUser = userManager.userLogin(users[0], captcha, captchaCode);
+				
 			}
 			catch(RuntimeException re)
 			{

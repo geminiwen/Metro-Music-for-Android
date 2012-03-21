@@ -60,6 +60,9 @@ public class UserManager {
 				userDAO = new UserDAO(new DataBaseHelper(appContext,app_name).getWritableDatabase());
 				userDAO.saveUser(loginUser, true);
 				userDAO.dbClose();
+				
+				// save user's cookies
+				networkManager.saveCookie();
 				return loginUser;
 			}
 			else

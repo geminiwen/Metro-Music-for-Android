@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: F:\\Java\\AndroidEclipse\\Metro-Music-for-Android\\src\\com\\MetroMusic\\aidl\\PlayerServiceHelper.aidl
+ * Original file: /Users/Coffee/Code/Eclipseworkspace/Metro-Music-for-Android/src/com/MetroMusic/aidl/PlayerServiceHelper.aidl
  */
 package com.MetroMusic.aidl;
 public interface PlayerServiceHelper extends android.os.IInterface

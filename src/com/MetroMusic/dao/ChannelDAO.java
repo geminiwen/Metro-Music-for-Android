@@ -22,9 +22,9 @@ public class ChannelDAO {
 		}
 	}
 
-	public List getAvilableChannelList()
+	public List<Channel> getAvilableChannelList()
 	{
-		List list = new ArrayList();
+		List<Channel> list = new ArrayList<Channel>();
 		Timestamp prev = new Timestamp((long) (System.currentTimeMillis() - 1.5552e10));
 		String columns[] = {"id","name","sid"};
 		String selection = "lstupdate > ?";
