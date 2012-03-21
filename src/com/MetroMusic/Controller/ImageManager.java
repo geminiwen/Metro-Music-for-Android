@@ -1,5 +1,6 @@
 package com.MetroMusic.controller;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
@@ -30,7 +31,12 @@ public class ImageManager {
 			public void run() {
 				// TODO Auto-generated method stub
 				synchronized (mutextObject) {
-					fileStream = networkManager.execute(strUrl, null);
+					try {
+						fileStream = networkManager.execute(strUrl, null);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					networkManager.closeExpiredConnection();
 					if( null != listener ) listener.onCompletion(fileStream);
 				}

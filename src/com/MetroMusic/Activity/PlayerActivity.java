@@ -46,6 +46,7 @@ public class PlayerActivity extends Activity{
 	private Button	playButton;
 	private Button	nextButton;
 	private Button	settingButton;
+	private Button  loveButton;
 	private ProgressBar waitProgressBar;
 	private ImageView	songImageView;
 	private TextView 	songTitle;
@@ -89,6 +90,7 @@ public class PlayerActivity extends Activity{
 				waitProgressBar.setVisibility(View.VISIBLE);
 				playButton.setEnabled(false);
 				nextButton.setEnabled(false);
+				loveButton.setEnabled(false);
 				break;
 			}
 			case PlayerState.READY:
@@ -96,6 +98,7 @@ public class PlayerActivity extends Activity{
 				waitProgressBar.setVisibility(View.GONE);
 				playButton.setEnabled(true);
 				nextButton.setEnabled(true);
+				loveButton.setEnabled(true);
 				break;
 			}
 			case PlayerState.PROGRESS_MAX:
@@ -115,6 +118,25 @@ public class PlayerActivity extends Activity{
 				int position = msg.arg1;
 				musicProgressBar.setSecondaryProgress(position);
 				break;
+			}
+			case PlayerState.LOVE:
+			{
+				loveButton.setBackgroundDrawable(res.getDrawable(R.drawable.mp_islovebtn_style));
+				break;
+			}
+			case PlayerState.UNLOVE:
+			{
+				loveButton.setBackgroundDrawable(res.getDrawable(R.drawable.mp_lovebtn_style));
+				break;
+			}
+			case PlayerState.ENABLE_LOVE:
+			{
+				loveButton.setEnabled(true);
+				break;
+			}
+			case PlayerState.DISABLE_LOVE:
+			{
+				loveButton.setEnabled(false);
 			}
 			}
 			super.handleMessage(msg);
@@ -240,6 +262,7 @@ public class PlayerActivity extends Activity{
 		this.songTime			= (TextView)findViewById(R.id.songtime);
 		this.songTitle			= (TextView)findViewById(R.id.songtitle);
 		this.musicProgressBar	= (ProgressBar)findViewById(R.id.musicProgressbar);
+		this.loveButton			= (Button)findViewById(R.id.lovebtn);
 		this.nm					= (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 		this.notification 		= new Notification(R.drawable.ic_launcher, "正在播放：", System.currentTimeMillis()); 
 		
@@ -279,6 +302,11 @@ public class PlayerActivity extends Activity{
     public void setOnNextClick(View.OnClickListener listener)
     {
     	nextButton.setOnClickListener(listener);
+    }
+    
+    public void setOnLoveClick(View.OnClickListener listener)
+    {
+    	loveButton.setOnClickListener(listener);
     }
     
 	@Override

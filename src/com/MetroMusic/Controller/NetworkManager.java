@@ -130,7 +130,7 @@ public class NetworkManager {
 		httpClient.connectionClosed();
 	}
 	
-	public void closeNetworkManager(Context context)
+	public void saveCookie(Context context)
 	{
 		CookieStore cookieStore = httpClient.getCustomCookieStore();
 		List<Cookie> cookieList = cookieStore.getCookies();

@@ -99,7 +99,13 @@ public class UserManager {
 			public void run() {
 				// TODO Auto-generated method stub
 				synchronized (mutextObject) {
-					InputStream is = networkManager.execute("http://douban.fm/j/new_captcha", null);
+					InputStream is = null;
+					try {
+						is = networkManager.execute("http://douban.fm/j/new_captcha", null);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					BufferedReader bfreader = new BufferedReader( new InputStreamReader(is) );
 					try {
 						String code = bfreader.readLine();

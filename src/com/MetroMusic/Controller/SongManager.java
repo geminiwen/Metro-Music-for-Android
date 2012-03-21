@@ -28,6 +28,8 @@ public class SongManager {
 	private Context		   appContext;
 	private String		   operator ;
 	
+	private OnLoveOperateCompletionListener songOpComletelistener;
+	
 	private PlayerModel data;
 	private static final String DOUBAN_URL = "http://douban.fm/j/mine/playlist";
 	private boolean isNew = true, isInited = false;
@@ -65,9 +67,8 @@ public class SongManager {
 		channelManager.initCurrentChannel();
 		operator = "n";
 		isInited = true;
-		
 	}
-	
+		
 	public SongManager(Context appContext,PlayerModel model)
 	{
 		this.networkManager = new NetworkManager(appContext);
@@ -109,6 +110,41 @@ public class SongManager {
 		return thisSong;
 	}
 	
+	public void loveSongAsync( final boolean isLove )
+	{
+		new Thread(new Runnable(){
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				RequestParams params	= new RequestParams();
+				Song		  thisSong	= data.getLastSong();
+				params.put("from", "ie9");
+				params.put("sid",thisSong.getSid());
+				String operators = null;
+				if(isLove)
+				{
+					operators = Api.OP_LIKE;
+				}
+				else
+				{
+					operators = Api.OP_CANCEL_LIKE;
+				}
+				params.put("type", operators);
+				params.put("channel", String.valueOf(channelManager.getCurrentChannel().getId()));
+				try {
+					JSONObject json = networkManager.executeAndGetJson(Api.API_THIRD_PART_RADIO,params);
+					if(songOpComletelistener!=null)songOpComletelistener.OnCompletion(isLove);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		}).start();
+		
+	}
+	
 	public ChannelManager getChannelManager()
 	{
 		return this.channelManager;
@@ -135,7 +171,16 @@ public class SongManager {
 	
 	public void closeManager()
 	{
-		networkManager.closeNetworkManager(appContext);
+		networkManager.saveCookie(appContext);
+	}
+	
+	public void setOnLoveOperateCompletionListener(OnLoveOperateCompletionListener listener)
+	{
+		this.songOpComletelistener = listener;
+	}
+	
+	public static interface OnLoveOperateCompletionListener{
+		void OnCompletion(boolean isloved);
 	}
 	
 }

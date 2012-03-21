@@ -23,6 +23,7 @@ public class LoginController {
 	private UserManager   userManager;
 	private String 		  captchaCode;
 	private String		  captcha;
+	private View.OnClickListener captchaClickListener = new CaptchaClickListenerImpl();
 	private Context appContext;
 	
 	public LoginController(LoginActivity loginActivity)
@@ -39,7 +40,7 @@ public class LoginController {
 		
 		
 		loginActivity.setOnLoginClickListener(new LoginListenerImpl());
-		loginActivity.setOnCaptchaImageClickListener(new CaptchaClickListenerImpl());
+		loginActivity.setOnCaptchaImageClickListener(captchaClickListener);
 		
 		
 		userManager.setAppContext(appContext);
@@ -128,6 +129,7 @@ public class LoginController {
     		else
     		{
     			Toast.makeText(loginActivity.getApplicationContext(), "登陆失败："+result, Toast.LENGTH_LONG).show();
+    			captchaClickListener.onClick(null);
     		}
     	}
 		

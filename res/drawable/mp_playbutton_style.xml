@@ -2,5 +2,6 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 	<item android:state_pressed="true" android:drawable="@drawable/mp_playbtn_pressed" />
 	<item android:state_focused="true" android:drawable="@drawable/mp_playbtn_pressed" />
+	<item android:state_enabled="false" android:drawable="@drawable/mp_playbtn_disabled"></item>
 	<item android:drawable="@drawable/mp_playbtn_unpressed" />
 </selector>

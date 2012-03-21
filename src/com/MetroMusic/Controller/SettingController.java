@@ -73,19 +73,16 @@ public class SettingController {
 	
 	public void onActivityStop(boolean loadNewSong)
 	{
-		if( null != loginUser )
-		{
-			bundle.putBoolean("loadnewsong", loadNewSong);
-			bundle.putBoolean("newloginuser", newLoginUser);
-			Intent intent = new Intent();
-			intent.putExtra("bundle", bundle);
-			if (activity.getParent() == null) {
-				activity.setResult(Activity.RESULT_OK, intent);
-		    } else {
-		    	activity.getParent().setResult(Activity.RESULT_OK, intent);
-		    }
-			
-		}
+		if(bundle == null)bundle = new Bundle();
+		bundle.putBoolean("loadnewsong", loadNewSong);
+		bundle.putBoolean("newloginuser", newLoginUser);
+		Intent intent = new Intent();
+		intent.putExtra("bundle", bundle);
+		if (activity.getParent() == null) {
+			activity.setResult(Activity.RESULT_OK, intent);
+	    } else {
+	    	activity.getParent().setResult(Activity.RESULT_OK, intent);
+	    }
 		activity.finish();
 	}
 	

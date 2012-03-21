@@ -46,8 +46,10 @@ public class PlayerController {
 	private SongInfomationManager songInfomationManager;
 	private Context appContext;
 	
-	private OnStartClickListener startListener = new OnStartClickListener();
-	private OnPauseClickListener pauseListener = new OnPauseClickListener();
+	private View.OnClickListener startListener	= new OnStartClickListener();
+	private View.OnClickListener pauseListener	= new OnPauseClickListener();
+	private View.OnClickListener loveListener	= new OnLoveButtonClickListenerImpl();
+	private View.OnClickListener unloveListener	= new OnUnLoveButtonClickListenerImpl();
 	
 	
 	public PlayerController(PlayerActivity playerActivity)
@@ -128,6 +130,7 @@ public class PlayerController {
 	{
 		try {
 			songManager.initializeIfNeed();
+			songManager.setOnLoveOperateCompletionListener(new LoveSongOperateCompletion());  
 			if( userModel != null )
 			{
 				songManager.addUserCookie(userModel);
@@ -155,9 +158,10 @@ public class PlayerController {
 	
 	private void playerMessageHandler(int state)
 	{
-		Message msg = playerActivity.getStateHandler().obtainMessage();
+		Handler stateHandler = playerActivity.getStateHandler();
+		Message msg = stateHandler.obtainMessage();
 		msg.what 	= state;
-		playerActivity.getStateHandler().sendMessage(msg);
+		stateHandler.sendMessage(msg);
 	}
 	
 	private void systemMessageHandler(int state,String message)
@@ -167,6 +171,34 @@ public class PlayerController {
 		msg.what 	= state;
 		msg.obj		= message;
 		systemHandler.sendMessage(msg);
+	}
+	
+	public void songIsLoved(boolean isLove)
+	{
+		Handler stateHandler = playerActivity.getStateHandler();
+		if(isLove)
+		{
+			playerActivity.setOnLoveClick(unloveListener);
+			stateHandler.sendEmptyMessage(PlayerState.LOVE);
+		}
+		else
+		{
+			playerActivity.setOnLoveClick(loveListener);
+			stateHandler.sendEmptyMessage(PlayerState.UNLOVE);
+		}
+	}
+	
+	public void toogleLoveButton(boolean enabled)
+	{
+		Handler stateHandler = playerActivity.getStateHandler();
+		if(enabled)
+		{
+			stateHandler.sendEmptyMessage(PlayerState.ENABLE_LOVE);
+		}
+		else
+		{
+			stateHandler.sendEmptyMessage(PlayerState.DISABLE_LOVE);
+		}
 	}
 	
 	private synchronized void loadNewSong()
@@ -180,6 +212,7 @@ public class PlayerController {
 					playerMessageHandler(PlayerState.WAIT);
 					try {
 						song = songManager.loadNewSong();
+						songIsLoved(song.getIsLike() > 0);
 						imageManager.getImageFromUrlAsync(URI.create(song.getPicture()));
 						songInfomationManager.setSong(song);
 						songInfomationManager.invokeUpdateUI();
@@ -319,6 +352,28 @@ public class PlayerController {
 			intent.putExtra("bundle", bundle);
 			playerActivity.startActivityForResult(intent, 1);
 		}
+	}
+	
+	class OnLoveButtonClickListenerImpl implements View.OnClickListener
+	{
+
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			toogleLoveButton(false);
+			songManager.loveSongAsync(true);
+		}
+		
+	}
+	
+	class OnUnLoveButtonClickListenerImpl implements View.OnClickListener
+	{
+
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			songManager.loveSongAsync(false);
+		}
 		
 	}
 
@@ -346,6 +401,16 @@ public class PlayerController {
 			msg.what 	  = SongInfomation.IMAGE;
 			msg.obj 	  = bitmap;
 			playerActivity.getSongInfomationHandler().sendMessage(msg);
+		}
+	}
+	
+	class LoveSongOperateCompletion implements SongManager.OnLoveOperateCompletionListener
+	{
+		@Override
+		public void OnCompletion(boolean isloved) {
+			// TODO Auto-generated method stub
+			toogleLoveButton(true);
+			songIsLoved(isloved);
 		}
 		
 	}
