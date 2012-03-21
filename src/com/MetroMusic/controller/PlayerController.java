@@ -138,7 +138,10 @@ public class PlayerController {
 			if( userModel != null )
 			{
 				songManager.addUserCookie(userModel);
-				songManager.changeChannelByName("红心兆赫");
+				SharedPreferences sharedPrefer = playerActivity.getSharedPreferences("CHANNEL", Activity.MODE_PRIVATE);  
+				int channelId 	= sharedPrefer.getInt("CHANNEL", -10);
+				if( channelId == -10 ) songManager.changeChannelByName("红心兆赫");
+				else songManager.changeChannelById(channelId);
 			}
 			
 		} catch (SQLiteException e) {
@@ -246,7 +249,7 @@ public class PlayerController {
 	{
 		this.userModel			= (UserModel) bundle.get("loginuser");
 		boolean needLoadNewSong = (Boolean)bundle.get("loadnewsong");
-		int loginUserFlag	= bundle.getInt("loginuserflag");
+		int loginUserFlag		= bundle.getInt("loginuserflag");
 		int	changeChannel		= bundle.getInt("changechannel", -10);
 		if( changeChannel != -10 ) songManager.changeChannelById(changeChannel);
 		if( loginUserFlag > 0 ) this.songManager.addUserCookie(userModel);	//当登陆用户后，需要保存用户中的ck参数到cookie中，这样才能被豆瓣服务器识别为登陆
