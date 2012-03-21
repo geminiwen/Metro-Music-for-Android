@@ -1,4 +1,4 @@
-package com.MetroMusic.Activity;
+package com.MetroMusic.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -15,7 +15,8 @@ import android.os.Message;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.MetroMusic.Service.PlayerService;
+import com.MetroMusic.activity.R;
+import com.MetroMusic.service.PlayerService;
 
 public class WelcomeActivity extends Activity {
     /** Called when the activity is first created. */
@@ -40,10 +41,10 @@ public class WelcomeActivity extends Activity {
 			case 1:
 			{
 				new AlertDialog.Builder(WelcomeActivity.this)
-		        .setTitle("ÄúµÄwifiÃ»ÓĞÁ¬½Ó")
+		        .setTitle("æ‚¨çš„wifiæ²¡æœ‰è¿æ¥")
 		        .setIcon(res.getDrawable(R.drawable.ic_launcher))
-		        .setMessage("ÄúµÄwifiÃ»ÓĞÁ¬½Ó£¬½«ºÄ·Ñ´óÁ¿Á÷Á¿£¬ÄúÈ·¶¨¼ÌĞøÂğ£¿")
-		        .setPositiveButton("È·ÈÏÍË³ö", new DialogInterface.OnClickListener() {
+		        .setMessage("æ‚¨çš„wifiæ²¡æœ‰è¿æ¥ï¼Œå°†è€—è´¹å¤§é‡æµé‡ï¼Œæ‚¨ç¡®å®šç»§ç»­å—ï¼Ÿ")
+		        .setPositiveButton("ç¡®è®¤é€€å‡º", new DialogInterface.OnClickListener() {
 
 					public void onClick(DialogInterface dialog, int which) {
 						// TODO Auto-generated method stub
@@ -52,7 +53,7 @@ public class WelcomeActivity extends Activity {
 						getApplicationContext().stopService(intent);
 					}
 		        })
-		        .setNegativeButton("¼ÌĞøÊÕÌı",new DialogInterface.OnClickListener() {
+		        .setNegativeButton("ç»§ç»­æ”¶å¬",new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface arg0, int arg1) {

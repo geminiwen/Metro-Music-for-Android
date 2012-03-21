@@ -1,4 +1,4 @@
-package com.MetroMusic.Controller;
+package com.MetroMusic.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,17 +21,17 @@ import android.util.Log;
 import android.view.View;
 import api.Api;
 
-import com.MetroMusic.AIDL.DataHelper;
-import com.MetroMusic.AIDL.PlayerServiceHelper;
-import com.MetroMusic.Activity.PlayerActivity;
-import com.MetroMusic.Activity.SettingActivity;
-import com.MetroMusic.Data.Channel;
-import com.MetroMusic.Data.Song;
-import com.MetroMusic.Helper.PlayerState;
-import com.MetroMusic.Helper.SongInfomation;
-import com.MetroMusic.Helper.SystemState;
-import com.MetroMusic.Model.PlayerModel;
-import com.MetroMusic.Model.UserModel;
+import com.MetroMusic.activity.PlayerActivity;
+import com.MetroMusic.activity.SettingActivity;
+import com.MetroMusic.aidl.DataHelper;
+import com.MetroMusic.aidl.PlayerServiceHelper;
+import com.MetroMusic.data.Channel;
+import com.MetroMusic.data.Song;
+import com.MetroMusic.helper.PlayerState;
+import com.MetroMusic.helper.SongInfomation;
+import com.MetroMusic.helper.SystemState;
+import com.MetroMusic.model.PlayerModel;
+import com.MetroMusic.model.UserModel;
 
 
 public class PlayerController {
@@ -71,8 +71,8 @@ public class PlayerController {
 			progressDialog = new ProgressDialog(playerActivity);
 			progressDialog.setCancelable(true);
 			progressDialog.setIndeterminate(true);
-			progressDialog.setTitle("»¶Ó­Äú");
-			progressDialog.setMessage("ÕıÔÚ³õÊ¼»¯");
+			progressDialog.setTitle("æ¬¢è¿æ‚¨");
+			progressDialog.setMessage("æ­£åœ¨åˆå§‹åŒ–");
 			progressDialog.show();
 		}
 		@Override
@@ -104,7 +104,7 @@ public class PlayerController {
 			int channelId	= sharedPrefer.getInt("CHANNEL", -10);
 			if( channelId == -10 )
 			{
-				Channel channel = songManager.changeChannelByName("ĞÂ¸è");
+				Channel channel = songManager.changeChannelByName("æ–°æ­Œ");
 				SharedPreferences.Editor editor = sharedPrefer.edit();
 				editor.putInt("CHANNEL", channel.getId());
 				editor.commit();
@@ -131,7 +131,7 @@ public class PlayerController {
 			if( userModel != null )
 			{
 				songManager.addUserCookie(userModel);
-				songManager.changeChannelByName("ºìĞÄÕ×ºÕ");
+				songManager.changeChannelByName("çº¢å¿ƒå…†èµ«");
 			}
 		} catch (SQLiteException e) {
 			// TODO Auto-generated catch block
@@ -139,7 +139,7 @@ public class PlayerController {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			systemMessageHandler(SystemState.NET_WORK_ERROR, "¸èÇú¹ÜÀíÆ÷³õÊ¼»¯Ê§°Ü");
+			systemMessageHandler(SystemState.NET_WORK_ERROR, "æ­Œæ›²ç®¡ç†å™¨åˆå§‹åŒ–å¤±è´¥");
 		}	
 	}
 	
@@ -186,13 +186,12 @@ public class PlayerController {
 						serviceHelper.playSong(song);
 						playerMessageHandler(PlayerState.PLAY);
 						playerActivity.setOnPlayerClick(pauseListener);
-						
 					} catch (RemoteException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
-						systemMessageHandler(SystemState.NET_WORK_ERROR,e.getMessage());
+						systemMessageHandler(SystemState.NET_WORK_ERROR,"ç½‘ç»œè®¿é—®é”™è¯¯");
 						Log.e(PlayerController.class.getName(), e.getMessage());
 					}catch(RuntimeException e)
 					{

@@ -1,6 +1,6 @@
-package com.MetroMusic.Model;
+package com.MetroMusic.model;
 
-import com.MetroMusic.Data.Song;
+import com.MetroMusic.data.Song;
 
 public class PlayerModel {
 	private boolean isStop;

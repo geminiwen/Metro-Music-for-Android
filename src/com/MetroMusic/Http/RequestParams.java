@@ -1,4 +1,4 @@
-package com.MetroMusic.Http;
+package com.MetroMusic.http;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;

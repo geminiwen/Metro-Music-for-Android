@@ -1,4 +1,4 @@
-package com.MetroMusic.Helper;
+package com.MetroMusic.helper;
 
 public class SongInfomation {
 	public final static int IMAGE = 0x01;

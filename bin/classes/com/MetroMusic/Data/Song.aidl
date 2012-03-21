@@ -1,3 +1,3 @@
-package com.MetroMusic.Data;
+package com.MetroMusic.data;
  
 parcelable Song;

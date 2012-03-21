@@ -1,4 +1,4 @@
-package com.MetroMusic.Helper;
+package com.MetroMusic.helper;
 
 public class LoginState {
 	public final static int CAPTCHA_LOAD = 0x01;

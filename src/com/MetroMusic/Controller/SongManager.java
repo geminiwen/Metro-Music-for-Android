@@ -1,4 +1,4 @@
-package com.MetroMusic.Controller;
+package com.MetroMusic.controller;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,14 +12,14 @@ import android.content.Context;
 import android.database.sqlite.SQLiteException;
 import api.Api;
 
-import com.MetroMusic.Activity.R;
-import com.MetroMusic.Data.Channel;
-import com.MetroMusic.Data.Song;
-import com.MetroMusic.Http.RequestParams;
-import com.MetroMusic.Model.PlayerModel;
-import com.MetroMusic.Model.UserModel;
+import com.MetroMusic.activity.R;
 import com.MetroMusic.dao.ChannelDAO;
+import com.MetroMusic.data.Channel;
+import com.MetroMusic.data.Song;
 import com.MetroMusic.dbhelper.DataBaseHelper;
+import com.MetroMusic.http.RequestParams;
+import com.MetroMusic.model.PlayerModel;
+import com.MetroMusic.model.UserModel;
 
 public class SongManager {
 	private NetworkManager networkManager;
@@ -58,7 +58,7 @@ public class SongManager {
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				throw new RuntimeException("∑˛ŒÒ∆˜¥ÌŒÛ");
+				throw new RuntimeException("ÊúçÂä°Âô®ÈîôËØØ");
 			}
 		}
 		channelDAO.dbClose();
@@ -101,7 +101,7 @@ public class SongManager {
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new RuntimeException("JSON ◊™ªª ß∞‹£∫"+responseJson.toString());
+			throw new RuntimeException("JSON ËΩ¨Êç¢Â§±Ë¥•Ôºö"+responseJson.toString());
 		} 
 		data.setLastSong(thisSong);
 		data.setStop(false);

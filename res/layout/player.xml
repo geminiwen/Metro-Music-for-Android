@@ -52,7 +52,7 @@
 	        
 			</FrameLayout>
 			
-	        <com.MetroMusic.View.AlwaysMarqueeTextView 
+	        <com.MetroMusic.view.AlwaysMarqueeTextView 
 	            android:id="@+id/songtitle"
 	            android:layout_centerHorizontal="true"
 	            android:layout_width="wrap_content"
@@ -86,7 +86,7 @@
 	        android:layout_height="fill_parent"
 	        android:layout_weight="2"
 	        android:padding="5dip" >
-
+		
 	        <ProgressBar
 	            android:id="@+id/musicProgressbar"
 	            style="?android:attr/progressBarStyleHorizontal"
@@ -98,34 +98,33 @@
 	            android:minHeight="10dip"
 	            android:secondaryProgress="0"
 	            android:layout_centerHorizontal="true" />
-	        
-
+	  
+        	
+ 			           
 	        <Button
 	            android:id="@+id/playbtn"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:layout_centerInParent="true"
-	            android:background="@drawable/mp_playbtn_style" />
-
-	        <Button
-	            android:id="@+id/prevbtn"
+	            android:background="@drawable/mp_playbutton_style"
+	            android:layout_centerInParent="true" />	
+ 			 
+        	<Button
+	            android:id="@+id/lovebtn"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:layout_centerInParent="true"
+	            android:layout_centerVertical="true"
 	            android:layout_toLeftOf="@id/playbtn"
-	            android:background="@drawable/mp_prevbtn_style" >
-	        </Button>
+	            android:background="@drawable/mp_lovebtn_style" />
+
 
 	        <Button
 	            android:id="@+id/nextbtn"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:layout_centerInParent="true"
+	            android:layout_centerVertical="true"
 	            android:layout_toRightOf="@id/playbtn"
-	            android:background="@drawable/mp_nextbtn_style" >
-	        </Button>
-
-
+	            android:background="@drawable/mp_nextbtn_style" />
+			
 	    </RelativeLayout>
 	        
     </LinearLayout>	

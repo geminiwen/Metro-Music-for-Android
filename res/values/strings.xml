@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MetroMusic</string>
-    <string name="app_version">0.1 build 12032001</string>
-    <string name="show_version">build 12032001</string>
+    <string name="app_version">0.1 build 12032101</string>
+    <string name="show_version">build 12032101</string>
 
 </resources>

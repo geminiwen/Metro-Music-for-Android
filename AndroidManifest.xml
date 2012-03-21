@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.MetroMusic.Activity"
+    package="com.MetroMusic.activity"
     android:versionCode="1"
     android:versionName="@string/app_version"
     android:installLocation="auto" >
@@ -28,8 +28,8 @@
         <activity android:name=".PlayerActivity"></activity>
         <activity android:name=".AboutActivity"></activity>
         <activity android:name=".SettingActivity"></activity>
-        <activity android:name=".LoginActivity"></activity>
-         <service android:name="com.MetroMusic.Service.PlayerService"></service>
+        <activity android:name="com.MetroMusic.activity.LoginActivity"></activity>
+         <service android:name="com.MetroMusic.service.PlayerService"></service>
     </application>
 
 </manifest>

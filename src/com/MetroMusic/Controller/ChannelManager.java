@@ -1,4 +1,4 @@
-package com.MetroMusic.Controller;
+package com.MetroMusic.controller;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.MetroMusic.Data.Channel;
+import com.MetroMusic.data.Channel;
 
 public class ChannelManager implements Serializable{
 	
@@ -21,14 +21,14 @@ public class ChannelManager implements Serializable{
 	}
 	
 	/***
-	 * 使用JSON数组初始化频道管理里面的频道列表
-	 * @param jsonArray JSON数组
+	 * 浣跨敤JSON鏁扮粍鍒濆鍖栭閬撶鐞嗛噷闈㈢殑棰戦亾鍒楄〃
+	 * @param jsonArray JSON鏁扮粍
 	 */
 	public ChannelManager(JSONArray jsonArray)
 	{
 		Channel favorite = new Channel();
 		favorite.setId(-3);
-		favorite.setName("红心兆赫");
+		favorite.setName("绾㈠績鍏嗚但");
 		favorite.setSeqId(-1);
 		channelList.add(favorite);
 		for(int i = 0; i < jsonArray.length(); i++ )
@@ -74,7 +74,7 @@ public class ChannelManager implements Serializable{
 	
 	public void initCurrentChannel()
 	{
-		this.currentChannel = this.currentChannel == null ? this.getChannelByName("新歌") : this.currentChannel;
+		this.currentChannel = this.currentChannel == null ? this.getChannelByName("鏂版瓕") : this.currentChannel;
 	}
 	
 	public Channel getCurrentChannel()

@@ -1,4 +1,4 @@
-package com.MetroMusic.Data;
+package com.MetroMusic.data;
 
 import java.io.Serializable;
 

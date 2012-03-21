@@ -1,4 +1,4 @@
-package com.MetroMusic.Activity;
+package com.MetroMusic.activity;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -14,8 +14,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.MetroMusic.Controller.LoginController;
-import com.MetroMusic.Helper.LoginState;
+import com.MetroMusic.activity.R;
+import com.MetroMusic.controller.LoginController;
+import com.MetroMusic.helper.LoginState;
 public class LoginActivity extends Activity{
 	
 	private LoginController			  loginController;

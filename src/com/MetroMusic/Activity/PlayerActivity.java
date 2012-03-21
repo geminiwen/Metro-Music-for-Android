@@ -1,4 +1,4 @@
-package com.MetroMusic.Activity;
+package com.MetroMusic.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -32,13 +32,14 @@ import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.MetroMusic.AIDL.PlayerServiceHelper;
-import com.MetroMusic.AIDL.PlayerUIHelper;
-import com.MetroMusic.Controller.PlayerController;
-import com.MetroMusic.Helper.PlayerState;
-import com.MetroMusic.Helper.SongInfomation;
-import com.MetroMusic.Helper.SystemState;
-import com.MetroMusic.Service.PlayerService;
+import com.MetroMusic.activity.R;
+import com.MetroMusic.aidl.PlayerServiceHelper;
+import com.MetroMusic.aidl.PlayerUIHelper;
+import com.MetroMusic.controller.PlayerController;
+import com.MetroMusic.helper.PlayerState;
+import com.MetroMusic.helper.SongInfomation;
+import com.MetroMusic.helper.SystemState;
+import com.MetroMusic.service.PlayerService;
 public class PlayerActivity extends Activity{
 
 	/* UIs  */
@@ -75,12 +76,12 @@ public class PlayerActivity extends Activity{
 			}
 			case PlayerState.PAUSE:
 			{
-				playButton.setBackgroundDrawable(res.getDrawable(R.drawable.mp_playbtn_style));
+				playButton.setBackgroundDrawable(res.getDrawable(R.drawable.mp_playbutton_style));
 				break;
 			}
 			case PlayerState.STOP:
 			{
-				playButton.setBackgroundDrawable(res.getDrawable(R.drawable.mp_playbtn_style));
+				playButton.setBackgroundDrawable(res.getDrawable(R.drawable.mp_playbutton_style));
 				break;
 			}
 			case PlayerState.WAIT:
@@ -130,7 +131,7 @@ public class PlayerActivity extends Activity{
 			case SystemState.NET_WORK_ERROR:
 			{
 				String message = (String)msg.obj;
-				Toast.makeText(getApplicationContext(), "´íÎó:\n"+message, Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(), "é”™è¯¯:\n"+message, Toast.LENGTH_LONG).show();
 				break;
 			}
 			}
@@ -160,16 +161,16 @@ public class PlayerActivity extends Activity{
 				break;
 			case SongInfomation.TITLE:
 				String title  = (String)msg.obj;
-				notification.tickerText = "ÕıÔÚ²¥·Å£º"+title;
+				notification.tickerText = "æ­£åœ¨æ’­æ”¾ï¼š"+title;
 				RemoteViews rv	= notification.contentView;
-				rv.setTextViewText(R.id.notificationStatusText, "ÕıÔÚ²¥·Å£º"+title);
+				rv.setTextViewText(R.id.notificationStatusText, "æ­£åœ¨æ’­æ”¾ï¼š"+title);
 				songTitle.setText(title);
 				nm.cancelAll();
 				nm.notify(R.string.app_name, notification);
 				break;
 			case SongInfomation.TIME:
 				String time   = (String)msg.obj;
-				songTime.setText("±¾ÇúÊ±³¤£º"+time);
+				songTime.setText("æœ¬æ›²æ—¶é•¿ï¼š"+time);
 				break;
 			}
 			super.handleMessage(msg);
@@ -240,7 +241,7 @@ public class PlayerActivity extends Activity{
 		this.songTitle			= (TextView)findViewById(R.id.songtitle);
 		this.musicProgressBar	= (ProgressBar)findViewById(R.id.musicProgressbar);
 		this.nm					= (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-		this.notification 		= new Notification(R.drawable.ic_launcher, "ÕıÔÚ²¥·Å£º", System.currentTimeMillis()); 
+		this.notification 		= new Notification(R.drawable.ic_launcher, "æ­£åœ¨æ’­æ”¾ï¼š", System.currentTimeMillis()); 
 		
 		notification.flags = Notification.FLAG_ONGOING_EVENT;
 		Intent i = new Intent(getApplicationContext(), PlayerActivity.class);
@@ -299,9 +300,9 @@ public class PlayerActivity extends Activity{
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub
 		super.onCreateOptionsMenu(menu);
-		//menu.add(1, 1, 1,"µÇÂ½");
-		menu.add(1, MENU_ABOUT, MENU_ABOUT, "¹ØÓÚ");
-		menu.add(1, MENU_EXIT_PROCESS, MENU_EXIT_PROCESS, "ÍË³ö³ÌĞò");
+		//menu.add(1, 1, 1,"ç™»é™†");
+		menu.add(1, MENU_ABOUT, MENU_ABOUT, "å…³äº");
+		menu.add(1, MENU_EXIT_PROCESS, MENU_EXIT_PROCESS, "é€€å‡ºç¨‹åº");
 		return true;
 	}
 	
@@ -314,9 +315,9 @@ public class PlayerActivity extends Activity{
 		{
 			new AlertDialog.Builder(this)
 	        .setIcon(android.R.drawable.ic_dialog_alert)
-	        .setTitle("È·ÈÏÍË³ö")
-	        .setMessage("ÄúÕæµÄÒªÍË³öÂğ")
-	        .setPositiveButton("ÊÇ", new DialogInterface.OnClickListener() {
+	        .setTitle("ç¡®è®¤é€€å‡º")
+	        .setMessage("æ‚¨çœŸçš„è¦é€€å‡ºå—")
+	        .setPositiveButton("æ˜¯", new DialogInterface.OnClickListener() {
 
 				public void onClick(DialogInterface dialog, int which) {
 					// TODO Auto-generated method stub
@@ -328,7 +329,7 @@ public class PlayerActivity extends Activity{
 					getApplicationContext().stopService(intent);
 				}
 	        })
-	        .setNegativeButton("·ñ",null)
+	        .setNegativeButton("å¦",null)
 	        .show();
 			break;
 		}

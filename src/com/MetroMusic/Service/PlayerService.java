@@ -1,4 +1,4 @@
-package com.MetroMusic.Service;
+package com.MetroMusic.service;
 
 import java.io.IOException;
 
@@ -13,11 +13,11 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.MetroMusic.AIDL.DataHelper;
-import com.MetroMusic.AIDL.PlayerServiceHelper;
-import com.MetroMusic.AIDL.PlayerUIHelper;
-import com.MetroMusic.Data.Song;
-import com.MetroMusic.Helper.PlayerState;
+import com.MetroMusic.aidl.DataHelper;
+import com.MetroMusic.aidl.PlayerServiceHelper;
+import com.MetroMusic.aidl.PlayerUIHelper;
+import com.MetroMusic.data.Song;
+import com.MetroMusic.helper.PlayerState;
 
 public class PlayerService extends Service implements OnCompletionListener,OnPreparedListener,OnBufferingUpdateListener,OnErrorListener {
 	
@@ -49,7 +49,7 @@ public class PlayerService extends Service implements OnCompletionListener,OnPre
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				throw new RuntimeException("“Ù¿÷≤•∑≈∆˜º”‘ÿURL ß∞‹");
+				throw new RuntimeException("Èü≥‰πêÊí≠ÊîæÂô®Âä†ËΩΩURLÂ§±Ë¥•");
 			}
 		}
 
@@ -96,6 +96,7 @@ public class PlayerService extends Service implements OnCompletionListener,OnPre
 			// TODO Auto-generated method stub
 			playerUIHelper = helper;
 		}
+
 	};
 	
 	@Override
@@ -133,7 +134,7 @@ public class PlayerService extends Service implements OnCompletionListener,OnPre
 		Log.i(this.getClass().getName(),"unbinded!");
 		return super.onUnbind(intent);
 	}
-
+                       
 	@Override
 	public void onCompletion(MediaPlayer mp) {
 		// TODO Auto-generated method stub

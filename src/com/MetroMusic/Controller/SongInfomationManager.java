@@ -1,10 +1,10 @@
-package com.MetroMusic.Controller;
+package com.MetroMusic.controller;
 
 import android.os.Handler;
 import android.os.Message;
 
-import com.MetroMusic.Data.Song;
-import com.MetroMusic.Helper.SongInfomation;
+import com.MetroMusic.data.Song;
+import com.MetroMusic.helper.SongInfomation;
 
 public class SongInfomationManager {
 	private Handler uiHandler;

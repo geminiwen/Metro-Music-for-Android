@@ -1,11 +1,11 @@
-package com.MetroMusic.Controller;
+package com.MetroMusic.controller;
 
 import java.io.Serializable;
 
 import android.content.Intent;
 import android.view.View;
 
-import com.MetroMusic.Activity.LoginActivity;
+import com.MetroMusic.activity.LoginActivity;
 import com.MetroMusic.preference.LoginPreference;
 
 public class LoginPreferenceController implements Serializable {

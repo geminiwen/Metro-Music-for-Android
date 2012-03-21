@@ -1,4 +1,4 @@
-package com.MetroMusic.Controller;
+package com.MetroMusic.controller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,11 +22,11 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.util.Log;
 
-import com.MetroMusic.Activity.R;
-import com.MetroMusic.Http.AsyncHttpClient;
-import com.MetroMusic.Http.RequestParams;
+import com.MetroMusic.activity.R;
 import com.MetroMusic.dao.CookieDAO;
 import com.MetroMusic.dbhelper.DataBaseHelper;
+import com.MetroMusic.http.AsyncHttpClient;
+import com.MetroMusic.http.RequestParams;
 
 public class NetworkManager {
 	private AsyncHttpClient httpClient;
@@ -62,7 +62,7 @@ public class NetworkManager {
 		return null;
 	}
 	
-	public InputStream execute(String uri,RequestParams params)
+	public InputStream execute(String uri,RequestParams params) throws IOException
 	{
 		HttpGet  httpGet = null;
 		if(params != null)
@@ -84,6 +84,7 @@ public class NetworkManager {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw e;
 		}
 		return null;
 	}

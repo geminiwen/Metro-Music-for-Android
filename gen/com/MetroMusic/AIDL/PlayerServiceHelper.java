@@ -1,33 +1,33 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: /Users/Coffee/Code/Eclipseworkspace/Metro-Music-for-Android/src/com/MetroMusic/AIDL/PlayerServiceHelper.aidl
+ * Original file: F:\\Java\\AndroidEclipse\\Metro-Music-for-Android\\src\\com\\MetroMusic\\aidl\\PlayerServiceHelper.aidl
  */
-package com.MetroMusic.AIDL;
+package com.MetroMusic.aidl;
 public interface PlayerServiceHelper extends android.os.IInterface
 {
 /** Local-side IPC implementation stub class. */
-public static abstract class Stub extends android.os.Binder implements com.MetroMusic.AIDL.PlayerServiceHelper
+public static abstract class Stub extends android.os.Binder implements com.MetroMusic.aidl.PlayerServiceHelper
 {
-private static final java.lang.String DESCRIPTOR = "com.MetroMusic.AIDL.PlayerServiceHelper";
+private static final java.lang.String DESCRIPTOR = "com.MetroMusic.aidl.PlayerServiceHelper";
 /** Construct the stub at attach it to the interface. */
 public Stub()
 {
 this.attachInterface(this, DESCRIPTOR);
 }
 /**
- * Cast an IBinder object into an com.MetroMusic.AIDL.PlayerServiceHelper interface,
+ * Cast an IBinder object into an com.MetroMusic.aidl.PlayerServiceHelper interface,
  * generating a proxy if needed.
  */
-public static com.MetroMusic.AIDL.PlayerServiceHelper asInterface(android.os.IBinder obj)
+public static com.MetroMusic.aidl.PlayerServiceHelper asInterface(android.os.IBinder obj)
 {
 if ((obj==null)) {
 return null;
 }
 android.os.IInterface iin = (android.os.IInterface)obj.queryLocalInterface(DESCRIPTOR);
-if (((iin!=null)&&(iin instanceof com.MetroMusic.AIDL.PlayerServiceHelper))) {
-return ((com.MetroMusic.AIDL.PlayerServiceHelper)iin);
+if (((iin!=null)&&(iin instanceof com.MetroMusic.aidl.PlayerServiceHelper))) {
+return ((com.MetroMusic.aidl.PlayerServiceHelper)iin);
 }
-return new com.MetroMusic.AIDL.PlayerServiceHelper.Stub.Proxy(obj);
+return new com.MetroMusic.aidl.PlayerServiceHelper.Stub.Proxy(obj);
 }
 public android.os.IBinder asBinder()
 {
@@ -45,8 +45,8 @@ return true;
 case TRANSACTION_setDataHelper:
 {
 data.enforceInterface(DESCRIPTOR);
-com.MetroMusic.AIDL.DataHelper _arg0;
-_arg0 = com.MetroMusic.AIDL.DataHelper.Stub.asInterface(data.readStrongBinder());
+com.MetroMusic.aidl.DataHelper _arg0;
+_arg0 = com.MetroMusic.aidl.DataHelper.Stub.asInterface(data.readStrongBinder());
 this.setDataHelper(_arg0);
 reply.writeNoException();
 return true;
@@ -54,8 +54,8 @@ return true;
 case TRANSACTION_setPlayerUIHelper:
 {
 data.enforceInterface(DESCRIPTOR);
-com.MetroMusic.AIDL.PlayerUIHelper _arg0;
-_arg0 = com.MetroMusic.AIDL.PlayerUIHelper.Stub.asInterface(data.readStrongBinder());
+com.MetroMusic.aidl.PlayerUIHelper _arg0;
+_arg0 = com.MetroMusic.aidl.PlayerUIHelper.Stub.asInterface(data.readStrongBinder());
 this.setPlayerUIHelper(_arg0);
 reply.writeNoException();
 return true;
@@ -63,9 +63,9 @@ return true;
 case TRANSACTION_playSong:
 {
 data.enforceInterface(DESCRIPTOR);
-com.MetroMusic.Data.Song _arg0;
+com.MetroMusic.data.Song _arg0;
 if ((0!=data.readInt())) {
-_arg0 = com.MetroMusic.Data.Song.CREATOR.createFromParcel(data);
+_arg0 = com.MetroMusic.data.Song.CREATOR.createFromParcel(data);
 }
 else {
 _arg0 = null;
@@ -101,7 +101,7 @@ return true;
 }
 return super.onTransact(code, data, reply, flags);
 }
-private static class Proxy implements com.MetroMusic.AIDL.PlayerServiceHelper
+private static class Proxy implements com.MetroMusic.aidl.PlayerServiceHelper
 {
 private android.os.IBinder mRemote;
 Proxy(android.os.IBinder remote)
@@ -116,7 +116,7 @@ public java.lang.String getInterfaceDescriptor()
 {
 return DESCRIPTOR;
 }
-public void setDataHelper(com.MetroMusic.AIDL.DataHelper helper) throws android.os.RemoteException
+public void setDataHelper(com.MetroMusic.aidl.DataHelper helper) throws android.os.RemoteException
 {
 android.os.Parcel _data = android.os.Parcel.obtain();
 android.os.Parcel _reply = android.os.Parcel.obtain();
@@ -131,7 +131,7 @@ _reply.recycle();
 _data.recycle();
 }
 }
-public void setPlayerUIHelper(com.MetroMusic.AIDL.PlayerUIHelper helper) throws android.os.RemoteException
+public void setPlayerUIHelper(com.MetroMusic.aidl.PlayerUIHelper helper) throws android.os.RemoteException
 {
 android.os.Parcel _data = android.os.Parcel.obtain();
 android.os.Parcel _reply = android.os.Parcel.obtain();
@@ -146,7 +146,7 @@ _reply.recycle();
 _data.recycle();
 }
 }
-public void playSong(com.MetroMusic.Data.Song song) throws android.os.RemoteException
+public void playSong(com.MetroMusic.data.Song song) throws android.os.RemoteException
 {
 android.os.Parcel _data = android.os.Parcel.obtain();
 android.os.Parcel _reply = android.os.Parcel.obtain();
@@ -221,9 +221,9 @@ static final int TRANSACTION_stopSong = (android.os.IBinder.FIRST_CALL_TRANSACTI
 static final int TRANSACTION_toogleSong = (android.os.IBinder.FIRST_CALL_TRANSACTION + 4);
 static final int TRANSACTION_songIsPlaying = (android.os.IBinder.FIRST_CALL_TRANSACTION + 5);
 }
-public void setDataHelper(com.MetroMusic.AIDL.DataHelper helper) throws android.os.RemoteException;
-public void setPlayerUIHelper(com.MetroMusic.AIDL.PlayerUIHelper helper) throws android.os.RemoteException;
-public void playSong(com.MetroMusic.Data.Song song) throws android.os.RemoteException;
+public void setDataHelper(com.MetroMusic.aidl.DataHelper helper) throws android.os.RemoteException;
+public void setPlayerUIHelper(com.MetroMusic.aidl.PlayerUIHelper helper) throws android.os.RemoteException;
+public void playSong(com.MetroMusic.data.Song song) throws android.os.RemoteException;
 public void stopSong() throws android.os.RemoteException;
 public void toogleSong(int toogle) throws android.os.RemoteException;
 public boolean songIsPlaying() throws android.os.RemoteException;

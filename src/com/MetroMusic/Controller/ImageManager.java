@@ -1,11 +1,11 @@
-package com.MetroMusic.Controller;
+package com.MetroMusic.controller;
 
 import java.io.InputStream;
 import java.net.URI;
 
 import android.content.Context;
 
-import com.MetroMusic.Http.AsyncHttpClient;
+import com.MetroMusic.http.AsyncHttpClient;
 
 public class ImageManager {
 	private NetworkManager networkManager;
@@ -19,7 +19,7 @@ public class ImageManager {
 	}
 	
 	/***
-	 * Òì²½»ñµÃÍ¼Æ¬Á÷
+	 * å¼‚æ­¥è·å¾—å›¾ç‰‡æµ
 	 * @param uri
 	 */
 	public void getImageFromUrlAsync(final URI uri)

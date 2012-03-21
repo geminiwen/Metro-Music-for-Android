@@ -1,4 +1,4 @@
-package com.MetroMusic.View;
+package com.MetroMusic.view;
 
 import android.content.Context;
 import android.util.AttributeSet;

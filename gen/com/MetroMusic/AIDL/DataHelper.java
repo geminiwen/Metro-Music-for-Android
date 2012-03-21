@@ -1,33 +1,33 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: /Users/Coffee/Code/Eclipseworkspace/Metro-Music-for-Android/src/com/MetroMusic/AIDL/DataHelper.aidl
+ * Original file: F:\\Java\\AndroidEclipse\\Metro-Music-for-Android\\src\\com\\MetroMusic\\aidl\\DataHelper.aidl
  */
-package com.MetroMusic.AIDL;
+package com.MetroMusic.aidl;
 public interface DataHelper extends android.os.IInterface
 {
 /** Local-side IPC implementation stub class. */
-public static abstract class Stub extends android.os.Binder implements com.MetroMusic.AIDL.DataHelper
+public static abstract class Stub extends android.os.Binder implements com.MetroMusic.aidl.DataHelper
 {
-private static final java.lang.String DESCRIPTOR = "com.MetroMusic.AIDL.DataHelper";
+private static final java.lang.String DESCRIPTOR = "com.MetroMusic.aidl.DataHelper";
 /** Construct the stub at attach it to the interface. */
 public Stub()
 {
 this.attachInterface(this, DESCRIPTOR);
 }
 /**
- * Cast an IBinder object into an com.MetroMusic.AIDL.DataHelper interface,
+ * Cast an IBinder object into an com.MetroMusic.aidl.DataHelper interface,
  * generating a proxy if needed.
  */
-public static com.MetroMusic.AIDL.DataHelper asInterface(android.os.IBinder obj)
+public static com.MetroMusic.aidl.DataHelper asInterface(android.os.IBinder obj)
 {
 if ((obj==null)) {
 return null;
 }
 android.os.IInterface iin = (android.os.IInterface)obj.queryLocalInterface(DESCRIPTOR);
-if (((iin!=null)&&(iin instanceof com.MetroMusic.AIDL.DataHelper))) {
-return ((com.MetroMusic.AIDL.DataHelper)iin);
+if (((iin!=null)&&(iin instanceof com.MetroMusic.aidl.DataHelper))) {
+return ((com.MetroMusic.aidl.DataHelper)iin);
 }
-return new com.MetroMusic.AIDL.DataHelper.Stub.Proxy(obj);
+return new com.MetroMusic.aidl.DataHelper.Stub.Proxy(obj);
 }
 public android.os.IBinder asBinder()
 {
@@ -52,7 +52,7 @@ return true;
 }
 return super.onTransact(code, data, reply, flags);
 }
-private static class Proxy implements com.MetroMusic.AIDL.DataHelper
+private static class Proxy implements com.MetroMusic.aidl.DataHelper
 {
 private android.os.IBinder mRemote;
 Proxy(android.os.IBinder remote)

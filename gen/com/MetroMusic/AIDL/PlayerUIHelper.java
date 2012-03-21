@@ -1,33 +1,33 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: /Users/Coffee/Code/Eclipseworkspace/Metro-Music-for-Android/src/com/MetroMusic/AIDL/PlayerUIHelper.aidl
+ * Original file: F:\\Java\\AndroidEclipse\\Metro-Music-for-Android\\src\\com\\MetroMusic\\aidl\\PlayerUIHelper.aidl
  */
-package com.MetroMusic.AIDL;
+package com.MetroMusic.aidl;
 public interface PlayerUIHelper extends android.os.IInterface
 {
 /** Local-side IPC implementation stub class. */
-public static abstract class Stub extends android.os.Binder implements com.MetroMusic.AIDL.PlayerUIHelper
+public static abstract class Stub extends android.os.Binder implements com.MetroMusic.aidl.PlayerUIHelper
 {
-private static final java.lang.String DESCRIPTOR = "com.MetroMusic.AIDL.PlayerUIHelper";
+private static final java.lang.String DESCRIPTOR = "com.MetroMusic.aidl.PlayerUIHelper";
 /** Construct the stub at attach it to the interface. */
 public Stub()
 {
 this.attachInterface(this, DESCRIPTOR);
 }
 /**
- * Cast an IBinder object into an com.MetroMusic.AIDL.PlayerUIHelper interface,
+ * Cast an IBinder object into an com.MetroMusic.aidl.PlayerUIHelper interface,
  * generating a proxy if needed.
  */
-public static com.MetroMusic.AIDL.PlayerUIHelper asInterface(android.os.IBinder obj)
+public static com.MetroMusic.aidl.PlayerUIHelper asInterface(android.os.IBinder obj)
 {
 if ((obj==null)) {
 return null;
 }
 android.os.IInterface iin = (android.os.IInterface)obj.queryLocalInterface(DESCRIPTOR);
-if (((iin!=null)&&(iin instanceof com.MetroMusic.AIDL.PlayerUIHelper))) {
-return ((com.MetroMusic.AIDL.PlayerUIHelper)iin);
+if (((iin!=null)&&(iin instanceof com.MetroMusic.aidl.PlayerUIHelper))) {
+return ((com.MetroMusic.aidl.PlayerUIHelper)iin);
 }
-return new com.MetroMusic.AIDL.PlayerUIHelper.Stub.Proxy(obj);
+return new com.MetroMusic.aidl.PlayerUIHelper.Stub.Proxy(obj);
 }
 public android.os.IBinder asBinder()
 {
@@ -81,7 +81,7 @@ return true;
 }
 return super.onTransact(code, data, reply, flags);
 }
-private static class Proxy implements com.MetroMusic.AIDL.PlayerUIHelper
+private static class Proxy implements com.MetroMusic.aidl.PlayerUIHelper
 {
 private android.os.IBinder mRemote;
 Proxy(android.os.IBinder remote)

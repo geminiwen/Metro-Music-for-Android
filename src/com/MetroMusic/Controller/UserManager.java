@@ -1,4 +1,4 @@
-package com.MetroMusic.Controller;
+package com.MetroMusic.controller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,11 +10,11 @@ import org.json.JSONObject;
 
 import android.content.Context;
 
-import com.MetroMusic.Activity.R;
-import com.MetroMusic.Http.RequestParams;
-import com.MetroMusic.Model.UserModel;
+import com.MetroMusic.activity.R;
 import com.MetroMusic.dao.UserDAO;
 import com.MetroMusic.dbhelper.DataBaseHelper;
+import com.MetroMusic.http.RequestParams;
+import com.MetroMusic.model.UserModel;
 
 public class UserManager {
 	private NetworkManager networkManager;
@@ -73,7 +73,7 @@ public class UserManager {
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new RuntimeException("JSON ◊™ªª¥ÌŒÛ");
+			throw new RuntimeException("JSON ËΩ¨Êç¢ÈîôËØØ");
 		}
 		return user;
 	}

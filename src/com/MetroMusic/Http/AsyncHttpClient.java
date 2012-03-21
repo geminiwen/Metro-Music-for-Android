@@ -1,4 +1,4 @@
-package com.MetroMusic.Http;
+package com.MetroMusic.http;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -36,7 +36,7 @@ import org.apache.http.protocol.SyncBasicHttpContext;
 import android.content.Context;
 import android.util.Log;
 
-import com.MetroMusic.Activity.R;
+import com.MetroMusic.activity.R;
 import com.MetroMusic.dao.CookieDAO;
 import com.MetroMusic.dbhelper.DataBaseHelper;
 

@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.MetroMusic.Activity.R;
+import com.MetroMusic.activity.R;
 
 public class RadioPreference extends Preference{
 

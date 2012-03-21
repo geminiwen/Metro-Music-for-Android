@@ -1,4 +1,4 @@
-package com.MetroMusic.Activity;
+package com.MetroMusic.activity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +15,10 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 
-import com.MetroMusic.Controller.ChannelManager;
-import com.MetroMusic.Controller.SettingController;
-import com.MetroMusic.Data.Channel;
+import com.MetroMusic.activity.R;
+import com.MetroMusic.controller.ChannelManager;
+import com.MetroMusic.controller.SettingController;
+import com.MetroMusic.data.Channel;
 import com.MetroMusic.preference.LoginPreference;
 import com.MetroMusic.preference.RadioPreference;
 
@@ -68,7 +69,7 @@ public class SettingActivity extends PreferenceActivity implements OnPreferenceC
 			}
 			prefer.setTitle(channel.getName());
 			prefer.setOnPreferenceClickListener(this);
-			if( channelName.equals("Ë½ÈËÕ×ºÕ") || channelName.equals("ºìĞÄÕ×ºÕ") )
+			if( channelName.equals("ç§äººå…†èµ«") || channelName.equals("çº¢å¿ƒå…†èµ«") )
 			{
 				privateChannelCategory.addPreference(prefer);
 			}
@@ -109,7 +110,7 @@ public class SettingActivity extends PreferenceActivity implements OnPreferenceC
 		// TODO Auto-generated method stub
 		loginPreference.setUsername(nickname);
 		this.privateChannelCategory.setEnabled(true);
-		this.privateChannelCategory.setTitle(nickname+" 's Ë½ÈËÕ×ºÕ");
+		this.privateChannelCategory.setTitle(nickname+" 's ç§äººå…†èµ«");
 	}
 	
 	@Override

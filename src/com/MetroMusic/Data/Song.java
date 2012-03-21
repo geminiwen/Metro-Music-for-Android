@@ -1,4 +1,4 @@
-package com.MetroMusic.Data;
+package com.MetroMusic.data;
 
 import org.json.JSONException;
 import org.json.JSONObject;

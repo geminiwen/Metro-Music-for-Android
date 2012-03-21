@@ -1,13 +1,13 @@
-package com.MetroMusic.Controller;
+package com.MetroMusic.controller;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import com.MetroMusic.Activity.SettingActivity;
-import com.MetroMusic.Data.Channel;
-import com.MetroMusic.Model.UserModel;
+import com.MetroMusic.activity.SettingActivity;
+import com.MetroMusic.data.Channel;
+import com.MetroMusic.model.UserModel;
 
 public class SettingController {
 	

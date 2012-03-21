@@ -5,8 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
-import com.MetroMusic.Model.PlayRecord;
-import com.MetroMusic.Model.UserModel;
+import com.MetroMusic.model.PlayRecord;
+import com.MetroMusic.model.UserModel;
 
 public class UserDAO {
 

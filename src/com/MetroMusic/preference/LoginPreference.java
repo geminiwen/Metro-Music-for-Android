@@ -9,9 +9,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.MetroMusic.Activity.R;
-import com.MetroMusic.Activity.R.id;
-import com.MetroMusic.Controller.LoginPreferenceController;
+import com.MetroMusic.activity.R;
+import com.MetroMusic.activity.R.id;
+import com.MetroMusic.controller.LoginPreferenceController;
 
 public class LoginPreference extends Preference  {
 
@@ -41,7 +41,7 @@ public class LoginPreference extends Preference  {
 	@Override
 	protected void onClick() {
 		// TODO Auto-generated method stub
-		//Toast.makeText(this.getContext(), "µã»÷ÁËÎÒ", Toast.LENGTH_LONG).show();
+		//Toast.makeText(this.getContext(), "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½", Toast.LENGTH_LONG).show();
 		super.onClick();
 	}
 

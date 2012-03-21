@@ -1,4 +1,4 @@
-package com.MetroMusic.Helper;
+package com.MetroMusic.helper;
 
 public class PlayerState {
 	public final static int PLAY	 = 0x01;

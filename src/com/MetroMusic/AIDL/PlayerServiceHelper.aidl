@@ -1,7 +1,7 @@
-package com.MetroMusic.AIDL;
-import com.metromusic.Data.Song;
-import com.MetroMusic.AIDL.DataHelper;
-import com.MetroMusic.AIDL.PlayerUIHelper;
+package com.MetroMusic.aidl;
+import com.metromusic.data.Song;
+import com.MetroMusic.aidl.DataHelper;
+import com.MetroMusic.aidl.PlayerUIHelper;
 interface PlayerServiceHelper{
 	void setDataHelper(DataHelper helper);
 	void setPlayerUIHelper(PlayerUIHelper helper);

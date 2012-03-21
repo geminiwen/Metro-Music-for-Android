@@ -1,4 +1,6 @@
-package com.MetroMusic.Activity;
+package com.MetroMusic.activity;
+
+import com.MetroMusic.activity.R;
 
 import android.app.Activity;
 import android.os.Bundle;

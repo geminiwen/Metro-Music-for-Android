@@ -1,4 +1,4 @@
-package com.MetroMusic.Controller;
+package com.MetroMusic.controller;
 
 import java.io.InputStream;
 
@@ -12,10 +12,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import com.MetroMusic.Activity.LoginActivity;
-import com.MetroMusic.Activity.SettingActivity;
-import com.MetroMusic.Helper.LoginState;
-import com.MetroMusic.Model.UserModel;
+import com.MetroMusic.activity.LoginActivity;
+import com.MetroMusic.activity.SettingActivity;
+import com.MetroMusic.helper.LoginState;
+import com.MetroMusic.model.UserModel;
 
 public class LoginController {
 	private LoginActivity loginActivity;
@@ -54,17 +54,17 @@ public class LoginController {
 			// TODO Auto-generated method stub
 			if(!loginActivity.checkUsernameAvaliable())
 			{
-				Toast.makeText(loginActivity.getApplicationContext(), "±ØĞëÊäÈëÓÃ»§Ãû", Toast.LENGTH_SHORT).show();
+				Toast.makeText(loginActivity.getApplicationContext(), "å¿…é¡»è¾“å…¥ç”¨æˆ·å", Toast.LENGTH_SHORT).show();
 				return;
 			}
 			if(!loginActivity.checkPasswordAvaliable())
 			{
-				Toast.makeText(loginActivity.getApplicationContext(), "±ØĞëÊäÈëÃÜÂë", Toast.LENGTH_SHORT).show();
+				Toast.makeText(loginActivity.getApplicationContext(), "å¿…é¡»è¾“å…¥å¯†ç ", Toast.LENGTH_SHORT).show();
 				return;
 			}
 			if(!loginActivity.chechCaptchaAvaliable())
 			{
-				Toast.makeText(loginActivity.getApplicationContext(), "±ØĞëÊäÈëÑéÖ¤Âë", Toast.LENGTH_SHORT).show();
+				Toast.makeText(loginActivity.getApplicationContext(), "å¿…é¡»è¾“å…¥éªŒè¯ç ", Toast.LENGTH_SHORT).show();
 				return;
 			}
 			String username = loginActivity.getUsername();
@@ -87,8 +87,8 @@ public class LoginController {
 			progressDialog = new ProgressDialog(loginActivity);
 			progressDialog.setCancelable(true);
 			progressDialog.setIndeterminate(true);
-			progressDialog.setTitle("ÕıÔÚµÇÂ½");
-			progressDialog.setMessage("µÇÂ½ÖĞ£¬ÇëÉÔºó");
+			progressDialog.setTitle("æ­£åœ¨ç™»é™†");
+			progressDialog.setMessage("ç™»é™†ä¸­ï¼Œè¯·ç¨å");
 			progressDialog.show();
 		}
 
@@ -111,12 +111,12 @@ public class LoginController {
     		progressDialog.dismiss();
     		if(result == null )
     		{
-    			Toast.makeText(loginActivity.getApplicationContext(), "µÇÂ¼µÄµØ·½ÓĞÒì³£Ã»ÓĞ²¶»ñ", Toast.LENGTH_LONG).show();
+    			Toast.makeText(loginActivity.getApplicationContext(), "ç™»å½•çš„åœ°æ–¹æœ‰å¼‚å¸¸æ²¡æœ‰æ•è·", Toast.LENGTH_LONG).show();
     			return;
     		}
     		if(result.equals("success"))
     		{
-    			Toast.makeText(loginActivity.getApplicationContext(), "µÇÂ½³É¹¦", Toast.LENGTH_LONG).show();
+    			Toast.makeText(loginActivity.getApplicationContext(), "ç™»é™†æˆåŠŸ", Toast.LENGTH_LONG).show();
     			Intent intent = new Intent(loginActivity,SettingActivity.class);
     			Bundle bundle = new Bundle();
     			bundle.putSerializable("loginuser", loginUser);
@@ -127,7 +127,7 @@ public class LoginController {
     		}
     		else
     		{
-    			Toast.makeText(loginActivity.getApplicationContext(), "µÇÂ½Ê§°Ü£º"+result, Toast.LENGTH_LONG).show();
+    			Toast.makeText(loginActivity.getApplicationContext(), "ç™»é™†å¤±è´¥ï¼š"+result, Toast.LENGTH_LONG).show();
     		}
     	}
 		
