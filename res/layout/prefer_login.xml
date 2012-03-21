@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingLeft="15dp"
     android:paddingTop="5dp"
@@ -13,21 +13,41 @@
         android:layout_height="wrap_content"
         android:text="豆瓣帐号"
         android:layout_weight="1"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
         />
     
-    <TextView
-        android:id="@+id/prefer_loginUsername"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
+	<LinearLayout
+	    android:id="@+id/prefer_logoutlayout"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:layout_alignParentRight="true"
+		android:visibility="gone"
+		 >
+	    <TextView
+	        android:id="@+id/prefer_loginUsername"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="macjay11"  />
+	    <Button
+	    	android:id="@+id/prefer_logoutBtn"
+	    	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:focusable="false"
+	    	android:text="注销" />
+        
+        </LinearLayout>
     
     <Button 
         android:id="@+id/perfer_loginBtn"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="4"
         android:text="登陆"
-        android:focusable="false" />
+        android:focusable="false"
+        android:layout_alignParentRight="true"
+         />
    
 
-</LinearLayout>
+</RelativeLayout>

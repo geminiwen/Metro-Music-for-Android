@@ -15,7 +15,10 @@ public class SettingController {
 	private UserModel		loginUser;
 	private	ChannelManager	channelManager;
 	private Bundle			bundle;
-	private boolean			newLoginUser = false;
+	private int				newLoginUser = 0;
+	public final static int USER_NEW_LOGIN = 1;
+	public final static int USER_NO_CHANGE	= 0;
+	public final static int USER_LOGOUT	= -1;
 	
 	public SettingController(SettingActivity activity)
 	{
@@ -28,9 +31,8 @@ public class SettingController {
 		{
 			this.bundle	=	bundle;
 			this.loginUser	= (UserModel)bundle.get("loginuser");
-			if(loginUser != null )
+			if( loginUser != null )
 			{
-				this.activity.setLoginPreferenceEnabled(false);
 				this.activity.setUsername(loginUser.getNickname());
 			}
 			if( this.channelManager == null )
@@ -39,6 +41,27 @@ public class SettingController {
 				this.activity.initChannel(channelManager);
 			}
 			
+		}
+	}
+	
+	public void logOut()
+	{
+		this.loginUser = null;
+		this.bundle.remove("loginuser");
+		this.newLoginUser	= USER_LOGOUT;
+		SharedPreferences sharedPrefer = activity.getSharedPreferences("CHANNEL", Activity.MODE_PRIVATE);  
+		int channelId				   = sharedPrefer.getInt("CHANNEL", -10);
+		if(channelId < 1)
+		{
+			SharedPreferences.Editor editor = sharedPrefer.edit();
+			Channel channel = channelManager.getChannelByName("华语");
+			editor.putInt("CHANNEL", channel.getId());
+			editor.commit();
+			onActivityStop(true);
+		}
+		else
+		{
+			onActivityStop(false);
 		}
 	}
 	
@@ -75,7 +98,7 @@ public class SettingController {
 	{
 		if(bundle == null)bundle = new Bundle();
 		bundle.putBoolean("loadnewsong", loadNewSong);
-		bundle.putBoolean("newloginuser", newLoginUser);
+		bundle.putInt("loginuserflag", newLoginUser);
 		Intent intent = new Intent();
 		intent.putExtra("bundle", bundle);
 		if (activity.getParent() == null) {
@@ -86,9 +109,9 @@ public class SettingController {
 		activity.finish();
 	}
 	
-	public void loadNewLoginUser(boolean isNewLogin)
+	public void loadNewLoginUser(int loginUserFlag)
 	{
-		newLoginUser = isNewLogin;
+		newLoginUser = loginUserFlag;
 	}
 	
 }

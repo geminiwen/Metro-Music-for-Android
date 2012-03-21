@@ -179,6 +179,7 @@ public class PlayerController {
 		systemHandler.sendMessage(msg);
 	}
 	
+	//使用Handler切换红心按钮是否呈红色
 	public void songIsLoved(boolean isLove)
 	{
 		Handler stateHandler = playerActivity.getStateHandler();
@@ -194,6 +195,7 @@ public class PlayerController {
 		}
 	}
 	
+	//使用Handler通知红心按钮是否可用
 	public void toogleLoveButton(boolean enabled)
 	{
 		Handler stateHandler = playerActivity.getStateHandler();
@@ -242,13 +244,19 @@ public class PlayerController {
 	
 	public void setUserData(Bundle bundle)
 	{
-		this.userModel = (UserModel)bundle.get("loginuser");
+		this.userModel			= (UserModel) bundle.get("loginuser");
 		boolean needLoadNewSong = (Boolean)bundle.get("loadnewsong");
-		boolean newLoginUser	= (Boolean)bundle.get("newloginuser");
+		int loginUserFlag	= bundle.getInt("loginuserflag");
 		int	changeChannel		= bundle.getInt("changechannel", -10);
 		if( changeChannel != -10 ) songManager.changeChannelById(changeChannel);
-		if( newLoginUser ) this.songManager.addUserCookie(userModel);
-		if(needLoadNewSong)
+		if( loginUserFlag > 0 ) this.songManager.addUserCookie(userModel);	//当登陆用户后，需要保存用户中的ck参数到cookie中，这样才能被豆瓣服务器识别为登陆
+		else if ( loginUserFlag < 0 ) 
+		{
+			songManager.changeChannelByName("新歌");
+			this.userModel	= null;
+		}
+		
+		if( needLoadNewSong )
 		{
 			try {
 				serviceHelper.stopSong();

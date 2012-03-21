@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import api.Api;
 
 import com.MetroMusic.activity.R;
 import com.MetroMusic.dao.UserDAO;
@@ -17,6 +18,9 @@ import com.MetroMusic.http.RequestParams;
 import com.MetroMusic.model.UserModel;
 
 public class UserManager {
+	
+	private final static int RESULT_OK = 0;
+	
 	private NetworkManager networkManager;
 	private UserDAO		   userDAO;
 	private Context 	   appContext;
@@ -26,11 +30,8 @@ public class UserManager {
 	
 	public UserManager(Context context)
 	{
-		networkManager = new NetworkManager(context);
-	}
-	
-	public void setAppContext(Context appContext) {
-		this.appContext = appContext;
+		this.appContext	= context;
+		networkManager  = new NetworkManager(context);
 	}
 
 	public UserModel userLogin(UserModel user,String captcha,String code)
@@ -47,9 +48,9 @@ public class UserManager {
 		params.put("captcha_id", code);
 		params.put("remember", "on");
 		try {
-			jsonObject = networkManager.executeAndPutJson("http://douban.fm/j/login", params);
+			jsonObject = networkManager.executeAndPutJson(Api.API_LOGIN, params);
 			networkManager.closeExpiredConnection();
-			boolean loginSuccess  = jsonObject.getInt("r") == 0;
+			boolean loginSuccess  = jsonObject.getInt("r") == RESULT_OK;
 			if(loginSuccess)
 			{
 				JSONObject userJson = jsonObject.getJSONObject("user_info");
@@ -73,12 +74,21 @@ public class UserManager {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new RuntimeException("网络IO错误");
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new RuntimeException("JSON 转换错误");
+			throw new RuntimeException("JSON 转换错误"+e.getMessage());
 		}
-		return user;
+	}
+	
+	public void logOut()
+	{
+		String app_name = appContext.getResources().getString(R.string.app_name);
+		userDAO = new UserDAO(new DataBaseHelper(appContext,app_name).getWritableDatabase());
+		userDAO.userLogOut();
+		networkManager.clearCookie();
+		userDAO.dbClose();
 	}
 
 	public UserModel getAutoLoginUserFromDB()
@@ -89,6 +99,7 @@ public class UserManager {
 		userDAO.dbClose();
 		return loginUser;
 	}
+	
 	public void setCaptchaCompeltionListener(OnCaptchaCompletionListener listener)
 	{
 		this.listener = listener;
@@ -105,9 +116,9 @@ public class UserManager {
 					InputStream is = null;
 					try {
 						is = networkManager.execute("http://douban.fm/j/new_captcha", null);
-					} catch (IOException e1) {
+					} catch (IOException e) {
 						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						e.printStackTrace();
 					}
 					BufferedReader bfreader = new BufferedReader( new InputStreamReader(is) );
 					try {

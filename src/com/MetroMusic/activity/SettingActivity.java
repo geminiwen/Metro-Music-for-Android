@@ -51,6 +51,8 @@ public class SettingActivity extends PreferenceActivity implements OnPreferenceC
 		loginPreference			= (LoginPreference)this.findPreference("login_prefer");
 		privateChannelCategory	= (PreferenceCategory)this.findPreference("private_channel");
 		publicChannelCategory	= (PreferenceCategory)this.findPreference("public_channel");
+		
+		loginPreference.setParent(this);
 	}
 	
 	
@@ -81,36 +83,36 @@ public class SettingActivity extends PreferenceActivity implements OnPreferenceC
 		}
 	}
 	
-	
-	@Override
-	protected void onNewIntent(Intent intent) {
-		// TODO Auto-generated method stub
-		initUserData(intent);
-		controller.loadNewLoginUser(true);
-		super.onNewIntent(intent);
-	}
-	
 	private void initUserData(Intent intent)
 	{
 		Bundle dataBundle =  intent.getBundleExtra("bundle");
 		controller.setData(dataBundle);
 	}
 	
-	@Override
-	public void onBackPressed() {
-		// TODO Auto-generated method stub
-		controller.onActivityStop(false );
-	}
-	public void setLoginPreferenceEnabled(boolean enabled)
+	//Called by it's child class
+	public void logOut()
 	{
-		loginPreference.setEnabled(enabled);
+		this.controller.logOut();
+		loginPreference.setUsername("未登录");
+		this.privateChannelCategory.setEnabled(false);
+		this.privateChannelCategory.setTitle("未登录");
 	}
 	
+	//Called by it's controller
 	public void setUsername(String nickname) {
 		// TODO Auto-generated method stub
 		loginPreference.setUsername(nickname);
 		this.privateChannelCategory.setEnabled(true);
 		this.privateChannelCategory.setTitle(nickname+" 's 私人兆赫");
+	}
+	
+	//Return from Login Activity
+	@Override
+	protected void onNewIntent(Intent intent) {
+		// TODO Auto-generated method stub
+		initUserData(intent);
+		controller.loadNewLoginUser(SettingController.USER_NEW_LOGIN);
+		super.onNewIntent(intent);
 	}
 	
 	@Override
@@ -128,4 +130,9 @@ public class SettingActivity extends PreferenceActivity implements OnPreferenceC
 		return true;
 	}
 	
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		controller.onActivityStop(false );
+	}
 }

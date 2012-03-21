@@ -15,7 +15,6 @@ import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.GzipDecompressingEntity;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.params.ConnPerRouteBean;
@@ -23,7 +22,6 @@ import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
@@ -34,7 +32,6 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.SyncBasicHttpContext;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.MetroMusic.activity.R;
 import com.MetroMusic.dao.CookieDAO;
@@ -48,8 +45,6 @@ public class AsyncHttpClient extends DefaultHttpClient{
 	private static final String ENCODING_GZIP = "gzip";
 	private static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
 	private static final String VERSION = "0.1";
-	private CookieStore cookieStore ;
-
 	private static int maxConnections = 10;
 	private static int socketTimeout = 8000;
 	private ThreadPoolExecutor threadPool;

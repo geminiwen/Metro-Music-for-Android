@@ -58,11 +58,13 @@ public final class R {
         public static final int musicProgressbar=0x7f070012;
         public static final int nextbtn=0x7f070015;
         public static final int notificationStatusText=0x7f07000b;
-        public static final int perfer_loginBtn=0x7f070019;
+        public static final int perfer_loginBtn=0x7f07001b;
         public static final int playbtn=0x7f070013;
         public static final int prefer_channelRadio=0x7f070017;
         public static final int prefer_channelText=0x7f070016;
-        public static final int prefer_loginUsername=0x7f070018;
+        public static final int prefer_loginUsername=0x7f070019;
+        public static final int prefer_logoutBtn=0x7f07001a;
+        public static final int prefer_logoutlayout=0x7f070018;
         public static final int settingBtn=0x7f07000c;
         public static final int songimageframe=0x7f07000d;
         public static final int songimageview=0x7f07000e;

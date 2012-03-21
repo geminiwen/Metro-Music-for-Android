@@ -13,6 +13,7 @@ public class Api {
 	  public static final String API_SINA_CALLBACK_PREFIX = "http://www.douban.com/j/app/radio/partner/sina/callback";
 	  public static final String API_VERIFY_EMAIL = "https://www.douban.com/j/app/radio/bind_email";
 	  public static final String API_THIRD_PART_RADIO = "http://douban.fm/j/mine/playlist";
+	  public static final String API_LOGIN = "http://douban.fm/j/login";
 	  private static String CLIENT_INFO;
 	  public static final String COOKIE_DOMAIN = "douban.com";
 	  private static String DISTRIBUTION_CHANNEL;

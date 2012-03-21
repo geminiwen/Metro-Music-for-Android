@@ -25,9 +25,14 @@ public class CookieDAO {
 		}
 	}
 	
-	public void saveCookie(List<Cookie> cookieList)
+	public void clearCookie()
 	{
 		db.delete("cookies", null, null);
+	}
+	
+	public void saveCookie(List<Cookie> cookieList)
+	{
+		clearCookie();
 		for( int i = 0; i < cookieList.size(); i ++ )
 		{
 			ContentValues cv		= new ContentValues();

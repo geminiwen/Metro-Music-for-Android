@@ -55,6 +55,13 @@ public class UserDAO {
 		cursor.close();
 	}
 	
+	public void userLogOut()
+	{
+		ContentValues cv = new ContentValues();
+		cv.put("autologin", "0");
+		db.update("userinfo", cv, "autologin = ?", new String[]{"1"});
+	}
+	
 	public UserModel getAutoLoginUserModel()
 	{
 		Cursor cursor = db.query("userinfo", null, "autologin = ?", new String[]{"1"}, null, null, null);

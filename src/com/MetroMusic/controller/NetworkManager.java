@@ -142,6 +142,15 @@ public class NetworkManager {
 		cookieDAO.dbClose();
 	}
 	
+	public void clearCookie()
+	{
+		String app_name			= appContext.getResources().getString(R.string.app_name);
+		CookieDAO	 cookieDAO  = new CookieDAO(new DataBaseHelper(appContext,app_name).getWritableDatabase());
+		cookieDAO.clearCookie();
+		cookieDAO.dbClose();
+		httpClient.setCustomeCookieStore(null);
+	}
+	
 	public void addCookie(Cookie cookie)
 	{
 		httpClient.getCustomCookieStore().addCookie(cookie);

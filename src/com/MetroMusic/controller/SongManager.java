@@ -22,6 +22,9 @@ import com.MetroMusic.model.PlayerModel;
 import com.MetroMusic.model.UserModel;
 
 public class SongManager {
+	
+	private final static int RESULT_OK = 0;
+	
 	private NetworkManager networkManager;
 	private ChannelManager channelManager;
 	private ChannelDAO	   channelDAO;
@@ -95,7 +98,7 @@ public class SongManager {
 		try {
 			JSONObject jsonObj	= networkManager.executeAndGetJson(Api.API_THIRD_PART_RADIO,params);
 			int		   result	= jsonObj.getInt("r");
-			if(result > 0)
+			if( RESULT_OK == result )
 			{
 				JSONArray  array	= jsonObj.getJSONArray("song");
 				networkManager.closeExpiredConnection();

@@ -40,7 +40,6 @@ public class LoginController {
 		loginActivity.setOnLoginClickListener(new LoginListenerImpl());
 		loginActivity.setOnCaptchaImageClickListener(captchaClickListener);
 		
-		userManager.setAppContext(appContext);
 		userManager.setCaptchaCompeltionListener(new CaptchaLoadCompletion());
 		userManager.loadCaptchaAsync();
 	}
