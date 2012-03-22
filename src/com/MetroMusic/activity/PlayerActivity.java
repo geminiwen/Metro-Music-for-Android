@@ -343,6 +343,7 @@ public class PlayerActivity extends Activity{
 		case MENU_HATE:
 		{
 			controller.neverPlay();
+			break;
 		}
 		case MENU_EXIT_PROCESS:
 		{
