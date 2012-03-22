@@ -56,11 +56,12 @@ public class PlayerActivity extends Activity{
 	private NotificationManager nm;   
 	
 	private Bitmap		prevBitmap = null;
-	private boolean			isStoped = false;
+
+	
 	/*  Constraint */
-	//private final static int MENU_LOGIN			= 0x01;
-	private final static int MENU_ABOUT			= 0x01;
-	private final static int MENU_EXIT_PROCESS	= 0x02;
+	private final static int MENU_HATE			= 0x01;
+	private final static int MENU_ABOUT			= 0x02;
+	private final static int MENU_EXIT_PROCESS	= 0x03;
 
 	private Handler stateHandler = new Handler()
 	{
@@ -328,7 +329,7 @@ public class PlayerActivity extends Activity{
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub
 		super.onCreateOptionsMenu(menu);
-		//menu.add(1, 1, 1,"登陆");
+		menu.add(1, MENU_HATE, MENU_HATE, "不再播放");
 		menu.add(1, MENU_ABOUT, MENU_ABOUT, "关于");
 		menu.add(1, MENU_EXIT_PROCESS, MENU_EXIT_PROCESS, "退出程序");
 		return true;
@@ -339,6 +340,10 @@ public class PlayerActivity extends Activity{
 		// TODO Auto-generated method stub
 		switch(item.getItemId())
 		{
+		case MENU_HATE:
+		{
+			controller.neverPlay();
+		}
 		case MENU_EXIT_PROCESS:
 		{
 			new AlertDialog.Builder(this)
@@ -352,7 +357,6 @@ public class PlayerActivity extends Activity{
 					PlayerActivity.this.finish();
 					controller.closeSongManager();
 					Intent intent = new Intent(getApplicationContext(),PlayerService.class);
-					isStoped = true;
 					nm.cancelAll();
 					getApplicationContext().stopService(intent);
 				}

@@ -149,7 +149,12 @@ public class SongManager {
 				}
 			}
 		}).start();
-		
+	}
+	
+	public void neverPlayThisSong()
+	{
+		RequestParams params	= new RequestParams();
+		Song		  thisSong	= data.getLastSong();
 	}
 	
 	public ChannelManager getChannelManager()

@@ -96,6 +96,7 @@ public class PlayerController {
 			userManager			= new UserManager(appContext);
 			songManager			= new SongManager(appContext,playerModel);
 			
+			//Add listeners
 			imageManager.setOnDownloadCompletionlistener(new ImageDownLoadCompletionImpl());
 			playerActivity.setOnNextClick(new OnNextClickListener());
 			playerActivity.setOnSettingClick(new OnSettingButtonClickListenerImpl());
@@ -124,11 +125,6 @@ public class PlayerController {
     	}
 	}
 	
-	public void closeSongManager()
-	{
-		songManager.closeManager();
-	}
-	
 	private void initSongManager()
 	{
 		try {
@@ -154,6 +150,30 @@ public class PlayerController {
 			systemMessageHandler(SystemState.NET_WORK_ERROR, "网络I/O错误，歌曲管理器初始化失败");
 		}
 	}
+	
+	/* Invoked by activities */
+	public void closeSongManager()
+	{
+		songManager.closeManager();
+	}
+	
+	public void neverPlay()
+	{
+		try {
+			serviceHelper.stopSong();
+			songManager.setOperator(Api.OP_HATE);
+			playerModel.appendHistory(playerModel.getLastSong().getSid(), Api.OP_HATE);
+			playerModel.setStop(true);
+			playerMessageHandler(PlayerState.STOP);
+			playerActivity.setOnPlayerClick(startListener);
+			loadNewSong();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	/* ********************* */
 	
 	public void setPlayHelper(PlayerServiceHelper playHelper) {
 		this.serviceHelper = playHelper;
@@ -281,20 +301,13 @@ public class PlayerController {
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
-			if(playerModel.isStop())
-			{
-				loadNewSong();
-			}
-			else
-			{
-				try {
-					serviceHelper.toogleSong(PlayerState.PAUSE);
-					playerMessageHandler(PlayerState.PLAY);
-					playerActivity.setOnPlayerClick(pauseListener);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			try {
+				serviceHelper.toogleSong(PlayerState.PAUSE);
+				playerMessageHandler(PlayerState.PLAY);
+				playerActivity.setOnPlayerClick(pauseListener);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
