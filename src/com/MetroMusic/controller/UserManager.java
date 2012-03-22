@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.apache.http.client.CookieStore;
+import org.apache.http.cookie.Cookie;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -96,14 +97,21 @@ public class UserManager {
 	public UserModel getAutoLoginUserFromDB()
 	{
 		String app_name = appContext.getResources().getString(R.string.app_name);
-		userDAO = new UserDAO(new DataBaseHelper(appContext,app_name).getWritableDatabase());
+		
 		CookieDAO cookieDAO = new CookieDAO(new DataBaseHelper(appContext,app_name).getWritableDatabase());
 		CookieStore store = cookieDAO.getLastCookieStore();
-		if( store.getCookies().size() < 0 ) 
+		boolean existCK   = false;
+		for( Cookie cookie : store.getCookies() )
 		{
-			cookieDAO.dbClose();
-			return null;
+			if( cookie.getName().equals("ck") )
+			{
+				existCK = true;
+			}
 		}
+		cookieDAO.dbClose();
+		if( !existCK ) return null;
+		
+		userDAO = new UserDAO(new DataBaseHelper(appContext,app_name).getWritableDatabase());
 		UserModel loginUser = userDAO.getAutoLoginUserModel();;
 		userDAO.dbClose();
 		return loginUser;
