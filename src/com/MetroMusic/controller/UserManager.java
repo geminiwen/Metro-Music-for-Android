@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.apache.http.client.CookieStore;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,6 +13,7 @@ import android.content.Context;
 import api.Api;
 
 import com.MetroMusic.activity.R;
+import com.MetroMusic.dao.CookieDAO;
 import com.MetroMusic.dao.UserDAO;
 import com.MetroMusic.dbhelper.DataBaseHelper;
 import com.MetroMusic.http.RequestParams;
@@ -95,6 +97,13 @@ public class UserManager {
 	{
 		String app_name = appContext.getResources().getString(R.string.app_name);
 		userDAO = new UserDAO(new DataBaseHelper(appContext,app_name).getWritableDatabase());
+		CookieDAO cookieDAO = new CookieDAO(new DataBaseHelper(appContext,app_name).getWritableDatabase());
+		CookieStore store = cookieDAO.getLastCookieStore();
+		if( store.getCookies().size() < 0 ) 
+		{
+			cookieDAO.dbClose();
+			return null;
+		}
 		UserModel loginUser = userDAO.getAutoLoginUserModel();;
 		userDAO.dbClose();
 		return loginUser;
