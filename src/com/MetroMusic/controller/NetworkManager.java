@@ -150,9 +150,5 @@ public class NetworkManager {
 		cookieDAO.dbClose();
 		httpClient.setCustomeCookieStore(null);
 	}
-	
-	public void addCookie(Cookie cookie)
-	{
-		httpClient.getCustomCookieStore().addCookie(cookie);
-	}
+
 }

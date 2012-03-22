@@ -95,20 +95,6 @@ public class UserManager {
 	public UserModel getAutoLoginUserFromDB()
 	{
 		String app_name = appContext.getResources().getString(R.string.app_name);
-		
-		CookieDAO cookieDAO = new CookieDAO(new DataBaseHelper(appContext,app_name).getWritableDatabase());
-		CookieStore store = cookieDAO.getLastCookieStore();
-		boolean existCK   = false;
-		for( Cookie cookie : store.getCookies() )
-		{
-			if( cookie.getName().equals("ck") )
-			{
-				existCK = true;
-			}
-		}
-		cookieDAO.dbClose();
-		if( !existCK ) return null;
-		
 		userDAO = new UserDAO(new DataBaseHelper(appContext,app_name).getWritableDatabase());
 		UserModel loginUser = userDAO.getAutoLoginUserModel();;
 		userDAO.dbClose();
@@ -161,5 +147,9 @@ public class UserManager {
 		void onCompletion(InputStream is,String code);
 	}
 	
+	public void saveUserCookie()
+	{
+		this.networkManager.saveCookie();
+	}
 	
 }

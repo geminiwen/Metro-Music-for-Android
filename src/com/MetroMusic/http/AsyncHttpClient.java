@@ -15,6 +15,7 @@ import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.GzipDecompressingEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.params.ConnPerRouteBean;
@@ -172,7 +173,6 @@ public class AsyncHttpClient extends DefaultHttpClient{
 		
 		@Override
 		public void run() {
-			
 			// TODO Auto-generated method stub
 			try {
 				client.execute(request);
@@ -208,6 +208,17 @@ public class AsyncHttpClient extends DefaultHttpClient{
 			instance = new AsyncHttpClient();
 			instance.setCustomeCookieStore(cookieStore);
 			cookieDAO.dbClose();
+			HttpGet httpGet = new HttpGet("http://douban.fm");
+			try {
+				instance.executeSync(httpGet);
+			} catch (ClientProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			
 		}
 	}

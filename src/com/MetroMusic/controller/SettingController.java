@@ -16,6 +16,7 @@ public class SettingController {
 	private	ChannelManager	channelManager;
 	private Bundle			bundle;
 	private int				newLoginUser = 0;
+	private UserManager		userManager;
 	public final static int USER_NEW_LOGIN = 1;
 	public final static int USER_NO_CHANGE	= 0;
 	public final static int USER_LOGOUT	= -1;
@@ -23,6 +24,7 @@ public class SettingController {
 	public SettingController(SettingActivity activity)
 	{
 		this.activity	= activity;
+		userManager 	= new UserManager(this.activity.getApplicationContext());
 	}
 	
 	public void setData(Bundle bundle)
@@ -112,6 +114,7 @@ public class SettingController {
 	public void loadNewLoginUser(int loginUserFlag)
 	{
 		newLoginUser = loginUserFlag;
+		userManager.saveUserCookie();
 	}
 	
 }
