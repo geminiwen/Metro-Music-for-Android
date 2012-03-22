@@ -301,13 +301,20 @@ public class PlayerController {
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
-			try {
-				serviceHelper.toogleSong(PlayerState.PAUSE);
-				playerMessageHandler(PlayerState.PLAY);
-				playerActivity.setOnPlayerClick(pauseListener);
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if(playerModel.isStop())
+			{
+				loadNewSong();
+			}
+			else
+			{
+				try {
+					serviceHelper.toogleSong(PlayerState.PAUSE);
+					playerMessageHandler(PlayerState.PLAY);
+					playerActivity.setOnPlayerClick(pauseListener);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}
