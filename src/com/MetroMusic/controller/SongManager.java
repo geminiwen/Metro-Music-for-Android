@@ -169,6 +169,8 @@ public class SongManager {
 	public void addUserCookie(UserModel userModel)
 	{
 		networkManager.addCookie(new BasicClientCookie("ck",userModel.getCk()));
+		// save user's cookies
+		networkManager.saveCookie();
 	}
 	
 	public Channel changeChannelById(int channelId)
