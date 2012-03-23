@@ -1,6 +1,10 @@
 package com.MetroMusic.helper;
 
-public class PlayerState {
+public class PlayerState extends AbstractState{
+	public PlayerState(int state) {
+		super(state);
+		// TODO Auto-generated constructor stub
+	}
 	public final static int PLAY			= 0x01;
 	public final static int PAUSE			= 0x02;
 	public final static int STOP			= 0x03;

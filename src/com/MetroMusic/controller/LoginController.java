@@ -3,75 +3,59 @@ package com.MetroMusic.controller;
 import java.io.InputStream;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 
-import com.MetroMusic.activity.LoginActivity;
+import com.MetroMusic.activity.MMAbstractActivity;
 import com.MetroMusic.activity.SettingActivity;
+import com.MetroMusic.helper.AbstractState;
 import com.MetroMusic.helper.LoginState;
 import com.MetroMusic.model.UserModel;
 
-public class LoginController {
-	private LoginActivity loginActivity;
+public class LoginController extends MMAbstractController{
+	public LoginController(MMAbstractActivity activity) {
+		super(activity);
+		// TODO Auto-generated constructor stub
+	}
+
 	private UserModel	  loginUser;
 	private UserManager   userManager;
 	private String 		  captchaCode;
 	private String		  captcha;
-	private View.OnClickListener captchaClickListener = new CaptchaClickListenerImpl();
-	private Context appContext;
 	
-	public LoginController(LoginActivity loginActivity)
-	{
-		this.loginActivity = loginActivity;
-	}
-	
-	public void Bind()
-	{
-		appContext = loginActivity.getApplicationContext();
+	public void onBind() {
+		// TODO Auto-generated method stub
 		userManager	= new UserManager(appContext);
-		
-		//Initialize the listeners
-		loginActivity.setOnLoginClickListener(new LoginListenerImpl());
-		loginActivity.setOnCaptchaImageClickListener(captchaClickListener);
-		
 		userManager.setCaptchaCompeltionListener(new CaptchaLoadCompletion());
 		userManager.loadCaptchaAsync();
 	}
 	
-	class LoginListenerImpl	implements View.OnClickListener
+	public void onLogin(String username,String password,String captcha)
 	{
-		@Override
-		public void onClick(View v) {
-			// TODO Auto-generated method stub
-			if(!loginActivity.checkUsernameAvaliable())
-			{
-				Toast.makeText(loginActivity.getApplicationContext(), "必须输入用户名", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			if(!loginActivity.checkPasswordAvaliable())
-			{
-				Toast.makeText(loginActivity.getApplicationContext(), "必须输入密码", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			if(!loginActivity.chechCaptchaAvaliable())
-			{
-				Toast.makeText(loginActivity.getApplicationContext(), "必须输入验证码", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			String username = loginActivity.getUsername();
-			String password = loginActivity.getPassword();
-			captcha	= loginActivity.getCaptcha();
-			UserModel user = new UserModel();
-			user.setUsername(username);
-			user.setPassword(password);
-			new LoginTask().execute(user);
+		if(username.isEmpty())
+		{
+			Toast.makeText(appContext, "必须输入用户名", Toast.LENGTH_SHORT).show();
+			return;
 		}
+		if(password.isEmpty())
+		{
+			Toast.makeText(appContext, "必须输入密码", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		if(captcha.isEmpty())
+		{
+			Toast.makeText(appContext, "必须输入验证码", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		this.captcha = captcha;
+		UserModel user = new UserModel();
+		user.setUsername(username);
+		user.setPassword(password);
+		new LoginTask().execute(user);
 	}
 	
 	class LoginTask	extends AsyncTask<UserModel, Void, String>
@@ -81,7 +65,7 @@ public class LoginController {
 		@Override
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
-			progressDialog = new ProgressDialog(loginActivity);
+			progressDialog = new ProgressDialog(activity);
 			progressDialog.setCancelable(true);
 			progressDialog.setIndeterminate(true);
 			progressDialog.setTitle("正在登陆");
@@ -109,24 +93,24 @@ public class LoginController {
     		progressDialog.dismiss();
     		if(result == null )
     		{
-    			Toast.makeText(loginActivity.getApplicationContext(), "登录的地方有异常没有捕获", Toast.LENGTH_LONG).show();
+    			Toast.makeText(appContext, "登录的地方有异常没有捕获", Toast.LENGTH_LONG).show();
     			return;
     		}
     		if(result.equals("success"))
     		{
-    			Toast.makeText(loginActivity.getApplicationContext(), "登陆成功", Toast.LENGTH_LONG).show();
-    			Intent intent = new Intent(loginActivity,SettingActivity.class);
+    			Toast.makeText(appContext, "登陆成功", Toast.LENGTH_LONG).show();
+    			Intent intent = new Intent(appContext,SettingActivity.class);
     			Bundle bundle = new Bundle();
     			bundle.putSerializable("loginuser", loginUser);
     			intent.putExtra("bundle", bundle);
     			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     			intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-    			loginActivity.startActivity(intent);
+    			activity.startActivity(intent);
     		}
     		else
     		{
-    			Toast.makeText(loginActivity.getApplicationContext(), "登陆失败："+result, Toast.LENGTH_LONG).show();
-    			captchaClickListener.onClick(null);
+    			Toast.makeText(appContext, "登陆失败："+result, Toast.LENGTH_LONG).show();
+    			onLoadCaptcha();
     		}
     	}
 		
@@ -139,21 +123,18 @@ public class LoginController {
 		public void onCompletion(InputStream is, String code) {
 			// TODO Auto-generated method stub
 			Bitmap bitmap = BitmapFactory.decodeStream(is);
-			loginActivity.updateCaptchaImage(bitmap);
+			AbstractState state = new LoginState(LoginState.CAPTCHA_COMPLETE);
+			LoginController.this.notify(state,bitmap);
 			captchaCode	= code;
 		}
 		
 	}
 	
-	class CaptchaClickListenerImpl implements View.OnClickListener
+	public void onLoadCaptcha()
 	{
-
-		@Override
-		public void onClick(View v) {
-			// TODO Auto-generated method stub
-			loginActivity.getUIHandler().sendEmptyMessage(LoginState.CAPTCHA_LOAD);
-			userManager.loadCaptchaAsync();
-		}
+		AbstractState state = new LoginState(LoginState.CAPTCHA_COMPLETE);
+		LoginController.this.notify(state,null);
+		userManager.loadCaptchaAsync();
 	}
 	
 }

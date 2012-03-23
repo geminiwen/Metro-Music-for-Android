@@ -1,6 +1,5 @@
 package com.MetroMusic.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,10 +14,9 @@ import android.os.Message;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.MetroMusic.activity.R;
 import com.MetroMusic.service.PlayerService;
 
-public class WelcomeActivity extends Activity {
+public class WelcomeActivity extends MMAbstractActivity {
     /** Called when the activity is first created. */
 	
 	public WelcomeActivity()
@@ -138,6 +136,12 @@ public class WelcomeActivity extends Activity {
 		getWindow().setFlags(~WindowManager.LayoutParams.FLAG_FULLSCREEN,   
         		WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		super.onDestroy();
+	}
+
+	@Override
+	protected void setListeners() {
+		// TODO Auto-generated method stub
+		
 	}
     
     

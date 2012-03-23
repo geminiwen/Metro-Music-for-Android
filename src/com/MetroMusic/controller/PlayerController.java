@@ -18,7 +18,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
-import android.view.View;
 import api.Api;
 
 import com.MetroMusic.activity.PlayerActivity;
@@ -27,6 +26,8 @@ import com.MetroMusic.aidl.DataHelper;
 import com.MetroMusic.aidl.PlayerServiceHelper;
 import com.MetroMusic.data.Channel;
 import com.MetroMusic.data.Song;
+import com.MetroMusic.handler.AbstractHandlerFactory;
+import com.MetroMusic.helper.AbstractState;
 import com.MetroMusic.helper.PlayerState;
 import com.MetroMusic.helper.SongInfomation;
 import com.MetroMusic.helper.SystemState;
@@ -34,95 +35,19 @@ import com.MetroMusic.model.PlayerModel;
 import com.MetroMusic.model.UserModel;
 
 
-public class PlayerController {
+public class PlayerController extends MMAbstractController{
 	
-	private PlayerActivity			playerActivity;
 	private PlayerModel				playerModel;
 	private UserModel				userModel;
 	private UserManager				userManager;
 	private PlayerServiceHelper		serviceHelper;
 	private SongManager				songManager;
 	private ImageManager			imageManager;
-	private SongInfomationManager songInfomationManager;
-	private Context appContext;
+	private SongInfomationManager	songInfomationManager;
 	
-	private View.OnClickListener startListener	= new OnStartClickListener();
-	private View.OnClickListener pauseListener	= new OnPauseClickListener();
-	private View.OnClickListener loveListener	= new OnLoveButtonClickListenerImpl();
-	private View.OnClickListener unloveListener	= new OnUnLoveButtonClickListenerImpl();
-	
-	
-	public PlayerController(PlayerActivity playerActivity)
+	public PlayerController(PlayerActivity activity)
 	{
-		this.playerActivity	= playerActivity;
-		this.playerModel	= new PlayerModel();
-	}
-	
-	public void changeState(int state)
-	{	
-		new LoadTask().execute(state);
-	}
-	
-	class LoadTask extends AsyncTask<Integer,Void,Void>
-	{
-		private ProgressDialog progressDialog;
-		
-		@Override
-		protected void onPreExecute() {
-			// TODO Auto-generated method stub
-			progressDialog = new ProgressDialog(playerActivity);
-			progressDialog.setCancelable(true);
-			progressDialog.setIndeterminate(true);
-			progressDialog.setTitle("欢迎您");
-			progressDialog.setMessage("正在初始化");
-			progressDialog.show();
-		}
-		@Override
-		protected Void doInBackground(Integer... params) {
-			// TODO Auto-generated method stub
-			if( PlayerState.STOP == params[0])
-			{
-				playerActivity.setOnPlayerClick(startListener);
-			}
-			else if( PlayerState.PLAY == params[0] )
-			{
-				playerModel.setStop(false);
-				playerActivity.setOnPlayerClick(pauseListener);
-			}
-			//Application Context
-			appContext			= playerActivity.getApplicationContext();
-			
-			imageManager		= new ImageManager(appContext);
-			userManager			= new UserManager(appContext);
-			songManager			= new SongManager(appContext,playerModel);
-			
-			//Add listeners
-			imageManager.setOnDownloadCompletionlistener(new ImageDownLoadCompletionImpl());
-			playerActivity.setOnNextClick(new OnNextClickListener());
-			playerActivity.setOnSettingClick(new OnSettingButtonClickListenerImpl());
-			
-			//歌曲名字、歌曲时间数据结构
-			songInfomationManager = new SongInfomationManager(playerActivity.getSongInfomationHandler());
-			
-			userModel	= userManager.getAutoLoginUserFromDB();
-			initSongManager();
-			SharedPreferences sharedPrefer = playerActivity.getSharedPreferences("CHANNEL", Activity.MODE_PRIVATE);  
-			int channelId	= sharedPrefer.getInt("CHANNEL", -10);
-			if( channelId == -10 )
-			{
-				Channel channel = songManager.changeChannelByName("新歌");
-				SharedPreferences.Editor editor = sharedPrefer.edit();
-				editor.putInt("CHANNEL", channel.getId());
-				editor.commit();
-			}			
-			startListener.onClick(null);
-			return null;
-		}
-		
-    	@Override
-    	protected void onPostExecute(Void result) { 
-    		progressDialog.dismiss();
-    	}
+		super(activity);
 	}
 	
 	private void initSongManager()
@@ -133,6 +58,7 @@ public class PlayerController {
 			
 			if( userModel != null )
 			{
+				PlayerActivity playerActivity  = (PlayerActivity)this.activity;
 				SharedPreferences sharedPrefer = playerActivity.getSharedPreferences("CHANNEL", Activity.MODE_PRIVATE);  
 				int channelId 	= sharedPrefer.getInt("CHANNEL", -10);
 				if( channelId == -10 ) songManager.changeChannelByName("红心兆赫");
@@ -142,16 +68,18 @@ public class PlayerController {
 		} catch (SQLiteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			systemMessageHandler(SystemState.NET_WORK_ERROR, "数据库加载错误");
+			AbstractState state = new SystemState(SystemState.NET_WORK_ERROR);
+			notify(state,"数据库加载错误");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			systemMessageHandler(SystemState.NET_WORK_ERROR, "网络I/O错误，歌曲管理器初始化失败");
+			AbstractState state = new SystemState(SystemState.NET_WORK_ERROR);
+			notify(state, "网络I/O错误，歌曲管理器初始化失败");
 		}
 	}
 	
 	/* Invoked by activities */
-	public void closeSongManager()
+	public void close()
 	{
 		songManager.closeManager();
 	}
@@ -163,8 +91,8 @@ public class PlayerController {
 			songManager.setOperator(Api.OP_HATE);
 			playerModel.appendHistory(playerModel.getLastSong().getSid(), Api.OP_HATE);
 			playerModel.setStop(true);
-			playerMessageHandler(PlayerState.STOP);
-			playerActivity.setOnPlayerClick(startListener);
+			AbstractState state = new PlayerState(PlayerState.STOP);
+			notify(state,null);
 			loadNewSong();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
@@ -183,55 +111,8 @@ public class PlayerController {
 			e.printStackTrace();
 		}
 	}
-	
-	private void playerMessageHandler(int state)
-	{
-		Handler stateHandler = playerActivity.getStateHandler();
-		Message msg = stateHandler.obtainMessage();
-		msg.what 	= state;
-		stateHandler.sendMessage(msg);
-	}
-	
-	private void systemMessageHandler(int state,String message)
-	{
-		Handler systemHandler = playerActivity.getSystemHandler();
-		Message msg = systemHandler.obtainMessage();
-		msg.what 	= state;
-		msg.obj		= message;
-		systemHandler.sendMessage(msg);
-	}
-	
-	//使用Handler切换红心按钮是否呈红色
-	public void songIsLoved(boolean isLove)
-	{
-		Handler stateHandler = playerActivity.getStateHandler();
-		if(isLove)
-		{
-			playerActivity.setOnLoveClick(unloveListener);
-			stateHandler.sendEmptyMessage(PlayerState.LOVE);
-		}
-		else
-		{
-			playerActivity.setOnLoveClick(loveListener);
-			stateHandler.sendEmptyMessage(PlayerState.UNLOVE);
-		}
-	}
-	
-	//使用Handler通知红心按钮是否可用
-	public void toogleLoveButton(boolean enabled)
-	{
-		Handler stateHandler = playerActivity.getStateHandler();
-		if(enabled)
-		{
-			stateHandler.sendEmptyMessage(PlayerState.ENABLE_LOVE);
-		}
-		else
-		{
-			stateHandler.sendEmptyMessage(PlayerState.DISABLE_LOVE);
-		}
-	}
-	
-	private synchronized void loadNewSong()
+
+	public synchronized void loadNewSong()
 	{
 		new Thread(new Runnable()
 		{
@@ -239,26 +120,31 @@ public class PlayerController {
 			public void run() {
 				// TODO Auto-generated method stub
 					Song song = null;
-					playerMessageHandler(PlayerState.WAIT);
+					AbstractState state = new PlayerState(PlayerState.WAIT);
+					PlayerController.this.notify(state,null);
 					try {
 						song = songManager.loadNewSong();
-						songIsLoved(song.getIsLike() > 0);
+						if( song.getIsLike() > 0 ) state = new PlayerState(PlayerState.LOVE);
+						else state = new PlayerState(PlayerState.UNLOVE);
+						PlayerController.this.notify(state,null);
 						imageManager.getImageFromUrlAsync(URI.create(song.getPicture()));
 						songInfomationManager.setSong(song);
 						songInfomationManager.invokeUpdateUI();
 						serviceHelper.playSong(song);
-						playerMessageHandler(PlayerState.PLAY);
-						playerActivity.setOnPlayerClick(pauseListener);
+						state = new PlayerState(PlayerState.PLAY);
+						PlayerController.this.notify(state,null);
 					} catch (RemoteException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
-						systemMessageHandler(SystemState.NET_WORK_ERROR,"网络访问错误");
+						state = new SystemState(SystemState.NET_WORK_ERROR);
+						PlayerController.this.notify(state,"网络错误");
 						Log.e(PlayerController.class.getName(), e.getMessage());
 					}catch(RuntimeException e)
 					{
-						systemMessageHandler(SystemState.NET_WORK_ERROR,e.getMessage());
+						state = new SystemState(SystemState.NET_WORK_ERROR);
+						PlayerController.this.notify(state,e.getMessage());
 					}
 				}
 		}).start();
@@ -284,8 +170,8 @@ public class PlayerController {
 				songManager.setOperator(Api.OP_SKIP);
 				playerModel.appendHistory(playerModel.getLastSong().getSid(), Api.OP_SKIP);
 				playerModel.setStop(true);
-				playerMessageHandler(PlayerState.STOP);
-				playerActivity.setOnPlayerClick(startListener);
+				AbstractState state = new PlayerState(PlayerState.STOP);
+				notify(state,null);
 				loadNewSong();
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
@@ -293,118 +179,92 @@ public class PlayerController {
 			}
 		}
 	}
-
-	class OnStartClickListener implements View.OnClickListener
+	
+	
+	public void onStart()
 	{
-		@Override
-		public void onClick(View v) {
-			// TODO Auto-generated method stub
-			if(playerModel.isStop())
-			{
-				loadNewSong();
+		if(playerModel.isStop())
+		{
+			loadNewSong();
+		}
+		else
+		{
+			try {
+				serviceHelper.toogleSong(PlayerState.PAUSE);
+				AbstractState state = new PlayerState(PlayerState.PLAY);
+				notify(state,null);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			else
-			{
+		}
+	}
+	
+	public void onPause()
+	{
+		try {
+			serviceHelper.toogleSong(PlayerState.PLAY);
+			AbstractState state = new PlayerState(PlayerState.PAUSE);
+			notify(state,null);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void onNext()
+	{
+		new Thread(new Runnable(){
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
 				try {
-					serviceHelper.toogleSong(PlayerState.PAUSE);
-					playerMessageHandler(PlayerState.PLAY);
-					playerActivity.setOnPlayerClick(pauseListener);
+					serviceHelper.stopSong();
+					songManager.setOperator(Api.OP_SKIP);
+					playerModel.appendHistory(playerModel.getLastSong().getSid(), Api.OP_SKIP);
+					playerModel.setStop(true);
+					AbstractState state = new PlayerState(PlayerState.STOP);
+					PlayerController.this.notify(state,null);
+					loadNewSong();
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-		}
-	}
-	
-	class OnPauseClickListener implements View.OnClickListener
-	{
-
-		@Override
-		public void onClick(View v) { 
-			// TODO Auto-generated method stub
-			try {
-				serviceHelper.toogleSong(PlayerState.PLAY);
-				playerMessageHandler(PlayerState.PAUSE);
-				playerActivity.setOnPlayerClick(startListener);
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	class OnNextClickListener implements View.OnClickListener
-	{
-		@Override
-		public void onClick(View v) {
-			// TODO Auto-generated method stub
-			new Thread(new Runnable(){
-
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					try {
-						serviceHelper.stopSong();
-						songManager.setOperator(Api.OP_SKIP);
-						playerModel.appendHistory(playerModel.getLastSong().getSid(), Api.OP_SKIP);
-						playerModel.setStop(true);
-						playerMessageHandler(PlayerState.STOP);
-						playerActivity.setOnPlayerClick(startListener);
-						loadNewSong();
-					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				
-			}).start();
 			
-		}
-		
+		}).start();
 	}
 	
-	class OnSettingButtonClickListenerImpl implements View.OnClickListener
+	public void onSetting()
 	{
-		@Override
-		public void onClick(View v) {
-			// TODO Auto-generated method stub
-			Intent intent = new Intent(playerActivity,SettingActivity.class);
-			Bundle	bundle	= new Bundle();
-			if(userModel != null)
-			{
-				bundle.putSerializable("loginuser", userModel);
-			}
-			ChannelManager channelManager = songManager.getChannelManager();
-			bundle.putSerializable("channelmanager", channelManager);
-			intent.putExtra("bundle", bundle);
-			playerActivity.startActivityForResult(intent, 1);
+		PlayerActivity playerActivity  = (PlayerActivity)this.activity;
+		Intent intent = new Intent(playerActivity,SettingActivity.class);
+		Bundle	bundle	= new Bundle();
+		if(userModel != null)
+		{
+			bundle.putSerializable("loginuser", userModel);
 		}
+		ChannelManager channelManager = songManager.getChannelManager();
+		bundle.putSerializable("channelmanager", channelManager);
+		intent.putExtra("bundle", bundle);
+		playerActivity.startActivityForResult(intent, 1);
 	}
 	
-	class OnLoveButtonClickListenerImpl implements View.OnClickListener
+	public void onLove()
 	{
-
-		@Override
-		public void onClick(View v) {
-			// TODO Auto-generated method stub
-			toogleLoveButton(false);
-			songManager.loveSongAsync(true);
-		}
-		
+		AbstractState state = new PlayerState(PlayerState.DISABLE_LOVE);
+		notify(state,null);
+		songManager.loveSongAsync(true);
 	}
 	
-	class OnUnLoveButtonClickListenerImpl implements View.OnClickListener
+	public void onUnLove()
 	{
-
-		@Override
-		public void onClick(View v) {
-			// TODO Auto-generated method stub
-			songManager.loveSongAsync(false);
-		}
-		
+		AbstractState state = new PlayerState(PlayerState.DISABLE_LOVE);
+		notify(state,null);
+		songManager.loveSongAsync(false);
 	}
-
+	
 	class MusicDataHelper extends DataHelper.Stub
 	{
 		@Override
@@ -413,8 +273,8 @@ public class PlayerController {
 			songManager.setOperator(Api.OP_END);
 			playerModel.appendHistory(playerModel.getLastSong().getSid(), Api.OP_END);
 			playerModel.setStop(true);
-			playerMessageHandler(PlayerState.STOP);
-			playerActivity.setOnPlayerClick(startListener);
+			AbstractState state = new PlayerState(PlayerState.STOP);
+			PlayerController.this.notify(state,null);
 			loadNewSong();
 		}
 	}
@@ -423,12 +283,10 @@ public class PlayerController {
 	{
 		@Override
 		public void onCompletion(InputStream is) {
-			// TODO Auto-generated method stub 
+			// TODO Auto-generated method stub 			
 			Bitmap bitmap = BitmapFactory.decodeStream(is);
-			Message msg   = playerActivity.getSongInfomationHandler().obtainMessage();
-			msg.what 	  = SongInfomation.IMAGE;
-			msg.obj 	  = bitmap;
-			playerActivity.getSongInfomationHandler().sendMessage(msg);
+			AbstractState state = new SongInfomation(SongInfomation.IMAGE);
+			PlayerController.this.notify(state,bitmap);
 		}
 	}
 	
@@ -437,10 +295,71 @@ public class PlayerController {
 		@Override
 		public void OnCompletion(boolean isloved) {
 			// TODO Auto-generated method stub
-			toogleLoveButton(true);
-			songIsLoved(isloved);
+			AbstractState state = new PlayerState(PlayerState.ENABLE_LOVE);
+			PlayerController.this.notify(state,null);
+			if(isloved) state = new PlayerState(PlayerState.LOVE);
+			else	state = new PlayerState(PlayerState.UNLOVE);
+			PlayerController.this.notify(state,null);
 		}
 		
+	}
+
+	@Override
+	public void onBind() {
+		// TODO Auto-generated method stub
+		new AsyncTask<Void,Void,Void>()
+		{
+			private ProgressDialog progressDialog;
+			
+			@Override
+			protected void onPreExecute() {
+				// TODO Auto-generated method stub
+				PlayerActivity playerActivity  = (PlayerActivity)activity;
+				progressDialog = new ProgressDialog(playerActivity);
+				progressDialog.setCancelable(true);
+				progressDialog.setIndeterminate(true);
+				progressDialog.setTitle("欢迎您");
+				progressDialog.setMessage("正在初始化");
+				progressDialog.show();
+			}
+			@Override
+			protected Void doInBackground(Void... params) {
+				// TODO Auto-generated method stub
+				//Application Context
+				PlayerActivity playerActivity  = (PlayerActivity)activity;
+
+				playerModel			= new PlayerModel();
+				imageManager		= new ImageManager(appContext);
+				userManager			= new UserManager(appContext);
+				songManager			= new SongManager(appContext,playerModel);
+				
+				
+				//Add listeners
+				imageManager.setOnDownloadCompletionlistener(new ImageDownLoadCompletionImpl());
+				
+				//歌曲名字、歌曲时间数据结构
+				songInfomationManager = new SongInfomationManager(playerActivity.getSongInfomationHandler());
+				
+				userModel	= userManager.getAutoLoginUserFromDB();
+				initSongManager();
+				SharedPreferences sharedPrefer = playerActivity.getSharedPreferences("CHANNEL", Activity.MODE_PRIVATE);  
+				int channelId	= sharedPrefer.getInt("CHANNEL", -10);
+				if( channelId == -10 )
+				{
+					Channel channel = songManager.changeChannelByName("新歌");
+					SharedPreferences.Editor editor = sharedPrefer.edit();
+					editor.putInt("CHANNEL", channel.getId());
+					editor.commit();
+				}			
+				onStart();
+				return null;
+			}
+			
+	    	@Override
+	    	protected void onPostExecute(Void result) { 
+	    		progressDialog.dismiss();
+	    	}
+		}.execute();
 	}
 	
 }

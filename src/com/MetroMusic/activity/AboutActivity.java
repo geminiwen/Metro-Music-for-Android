@@ -1,14 +1,11 @@
 package com.MetroMusic.activity;
 
-import com.MetroMusic.activity.R;
-
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-public class AboutActivity extends Activity{
+public class AboutActivity extends MMAbstractActivity{
 
 	private Button backButton;
 	
@@ -17,7 +14,19 @@ public class AboutActivity extends Activity{
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.about);
+		setupViews();
+	}
+
+	@Override
+	protected void setupViews() {
+		// TODO Auto-generated method stub
 		backButton = (Button)findViewById(R.id.backBtn);
+		super.setupViews();
+	}
+
+	@Override
+	protected void setListeners() {
+		// TODO Auto-generated method stub
 		backButton.setOnClickListener(new OnClickListener(){
 
 			@Override

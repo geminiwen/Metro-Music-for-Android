@@ -1,12 +1,10 @@
 package com.MetroMusic.activity;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -14,24 +12,37 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.MetroMusic.activity.R;
 import com.MetroMusic.controller.LoginController;
 import com.MetroMusic.helper.LoginState;
-public class LoginActivity extends Activity{
-	
-	private LoginController			  loginController;
+public class LoginActivity extends MMAbstractActivity{
+
 	private AutoCompleteTextView	  usernameView;
 	private EditText				  passwordView;
 	private Button					  loginButton;
 	private EditText				  captchaEditText;
 	private ProgressBar				  waitProgressBar;
 	private ImageView				  captchaImage;
-	   
-	public LoginActivity() {
-		super();
-		// TODO Auto-generated constructor stub
-		loginController = new LoginController(this);
-	}
+	
+	private View.OnClickListener loginListener		= new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			String username = usernameView.getText().toString();
+			String password = passwordView.getText().toString();
+			String captcha	= captchaEditText.getText().toString();
+			((LoginController)controller).onLogin(username, password, captcha);
+		}
+	};
+	
+	private View.OnClickListener captchaListener	= new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			((LoginController)controller).onLoadCaptcha();
+		}
+	};
 	
 	private Handler uiHandler = new Handler()
 	{
@@ -74,10 +85,12 @@ public class LoginActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		fullScreen();
 		setContentView(R.layout.login);
+		setController(new LoginController(this));
 		setupViews();
 	}
 	
-	private void setupViews()
+	@Override
+	protected void setupViews()
 	{
 		usernameView	= (AutoCompleteTextView)findViewById(R.id.loginUsername);
 		passwordView	= (EditText)findViewById(R.id.loginPassword);
@@ -85,7 +98,7 @@ public class LoginActivity extends Activity{
 		captchaImage	= (ImageView)findViewById(R.id.loginCaptchaImageView);
 		captchaEditText	= (EditText)findViewById(R.id.loginCaptcha);
 		waitProgressBar = (ProgressBar)findViewById(R.id.loginWaitProgressBar);
-		loginController.Bind();
+		super.setupViews();
 	}
 	
 	private void fullScreen()
@@ -93,51 +106,11 @@ public class LoginActivity extends Activity{
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 	}
 
-	public boolean checkUsernameAvaliable()
-	{
-		return !usernameView.getText().toString().equals("");
-	}
-	
-	public boolean checkPasswordAvaliable()
-	{
-		return !passwordView.getText().toString().equals("");
-	}
-	
-	public boolean chechCaptchaAvaliable()
-	{
-		return !captchaEditText.getText().toString().equals("");
-	}
-
-	public void setOnLoginClickListener(OnClickListener l) {
-		loginButton.setOnClickListener(l);
-	}
-	
-	
-	public void setOnCaptchaImageClickListener(View.OnClickListener l) {
-		captchaImage.setOnClickListener(l);
-	}
-	
-	public String getUsername()
-	{
-		return this.usernameView.getText().toString();
-	}
-	
-	public String getPassword()
-	{
-		return this.passwordView.getText().toString();
-	}
-	
-	public String getCaptcha()
-	{
-		return this.captchaEditText.getText().toString();
-	}
-
-	public void updateCaptchaImage(Bitmap bitmap)
-	{
-		Message msg = uiHandler.obtainMessage();
-		msg.obj		= bitmap;
-		msg.what	= LoginState.CAPTCHA_COMPLETE;
-		uiHandler.sendMessage(msg);
+	@Override
+	protected void setListeners() {
+		// TODO Auto-generated method stub
+		this.loginButton.setOnClickListener(loginListener);
+		this.captchaImage.setOnClickListener(captchaListener);
 	}
 	
 	

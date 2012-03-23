@@ -32,7 +32,6 @@ import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.MetroMusic.activity.R;
 import com.MetroMusic.aidl.PlayerServiceHelper;
 import com.MetroMusic.aidl.PlayerUIHelper;
 import com.MetroMusic.controller.PlayerController;
@@ -40,7 +39,7 @@ import com.MetroMusic.helper.PlayerState;
 import com.MetroMusic.helper.SongInfomation;
 import com.MetroMusic.helper.SystemState;
 import com.MetroMusic.service.PlayerService;
-public class PlayerActivity extends Activity{
+public class PlayerActivity extends MMAbstractActivity{
 
 	/* UIs  */
 	private Button	playButton;
@@ -55,13 +54,70 @@ public class PlayerActivity extends Activity{
 	private Notification  notification;
 	private NotificationManager nm;   
 	
-	private Bitmap		prevBitmap = null;
-
-	
-	/*  Constraint */
+	/* Constraint */
 	private final static int MENU_HATE			= 0x01;
 	private final static int MENU_ABOUT			= 0x02;
 	private final static int MENU_EXIT_PROCESS	= 0x03;
+	/* ********** */
+	
+	/* Listeners  */
+	private View.OnClickListener startListener	  = new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			((PlayerController)controller).onStart();
+		}
+	};
+	
+	private View.OnClickListener stopListener  	 = new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			((PlayerController)controller).onPause();
+		}
+	};
+	
+	private View.OnClickListener nextListener		= new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			((PlayerController)controller).onNext();
+		}
+	};
+	
+	private View.OnClickListener loveListener		= new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			loveButton.setEnabled(false);
+			((PlayerController)controller).onLove();
+		}
+	};
+	
+	private View.OnClickListener unloveListener		= new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			loveButton.setEnabled(false);
+			((PlayerController)controller).onUnLove();
+		}
+	};
+	
+	private View.OnClickListener settingListener	= new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			((PlayerController)controller).onSetting();
+		}
+	};
+	
+	/* *********  */
 
 	private Handler stateHandler = new Handler()
 	{
@@ -74,16 +130,19 @@ public class PlayerActivity extends Activity{
 			case PlayerState.PLAY:
 			{
 				playButton.setBackgroundDrawable(res.getDrawable(R.drawable.mp_pausebtn_style));
+				playButton.setOnClickListener(stopListener);
 				break;
 			}
 			case PlayerState.PAUSE:
 			{
 				playButton.setBackgroundDrawable(res.getDrawable(R.drawable.mp_playbutton_style));
+				playButton.setOnClickListener(startListener);
 				break;
 			}
 			case PlayerState.STOP:
 			{
 				playButton.setBackgroundDrawable(res.getDrawable(R.drawable.mp_playbutton_style));
+				playButton.setOnClickListener(startListener);
 				break;
 			}
 			case PlayerState.WAIT:
@@ -123,11 +182,13 @@ public class PlayerActivity extends Activity{
 			case PlayerState.LOVE:
 			{
 				loveButton.setBackgroundDrawable(res.getDrawable(R.drawable.mp_islovebtn_style));
+				loveButton.setOnClickListener(unloveListener);
 				break;
 			}
 			case PlayerState.UNLOVE:
 			{
 				loveButton.setBackgroundDrawable(res.getDrawable(R.drawable.mp_lovebtn_style));
+				loveButton.setOnClickListener(loveListener);
 				break;
 			}
 			case PlayerState.ENABLE_LOVE:
@@ -173,12 +234,9 @@ public class PlayerActivity extends Activity{
 			switch(msg.what)
 			{
 			case SongInfomation.IMAGE:
-				if( prevBitmap != null )
-					prevBitmap.recycle();
 				Bitmap bitmap = (Bitmap)msg.obj;
 				songImageView.setBackgroundDrawable(res.getDrawable(R.drawable.mp_songimage_style));
 				songImageView.setImageBitmap(bitmap);
-				prevBitmap = bitmap;
 				Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.mp_songimage_animation);
 				songImageView.startAnimation(animation);
 				break;
@@ -214,8 +272,6 @@ public class PlayerActivity extends Activity{
 	{
 		return songInfomationHandler;
 	}
-	/* Controller */
-	private PlayerController controller;
 	
 	/* Service Interface */
 	private PlayerServiceHelper serviceHelper;
@@ -230,7 +286,7 @@ public class PlayerActivity extends Activity{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-    		controller.setPlayHelper(serviceHelper);
+    		((PlayerController)controller).setPlayHelper(serviceHelper);
     	}  
     	public void onServiceDisconnected(ComponentName className) {  
     		Log.i("Tag","disconnect service");  
@@ -241,73 +297,23 @@ public class PlayerActivity extends Activity{
 	public PlayerServiceHelper getServiceHelper() {
 		return serviceHelper;
 	}
-
-	public PlayerActivity()
-	{
-		controller = new PlayerController(this);
-	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		super.onCreate(savedInstanceState);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);  
-		FullScreen();
+		super.onCreate(savedInstanceState);	
+		setWindowProperties();
 		setContentView(R.layout.player);
-		
-		this.playButton 		= (Button)findViewById(R.id.playbtn);
-		this.nextButton 		= (Button)findViewById(R.id.nextbtn);
-		this.settingButton		= (Button)findViewById(R.id.settingBtn);
-		this.waitProgressBar 	= (ProgressBar)findViewById(R.id.waitProgressBar);
-		this.songImageView		= (ImageView)findViewById(R.id.songimageview);
-		this.songTime			= (TextView)findViewById(R.id.songtime);
-		this.songTitle			= (TextView)findViewById(R.id.songtitle);
-		this.musicProgressBar	= (ProgressBar)findViewById(R.id.musicProgressbar);
-		this.loveButton			= (Button)findViewById(R.id.lovebtn);
-		this.nm					= (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-		this.notification 		= new Notification(R.drawable.ic_launcher, "正在播放：", System.currentTimeMillis()); 
-		
-		notification.flags = Notification.FLAG_ONGOING_EVENT;
-		Intent i = new Intent(getApplicationContext(), PlayerActivity.class);
-		i.setAction(Intent.ACTION_MAIN);  
-		i.addCategory(Intent.CATEGORY_LAUNCHER);  
-		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);  
-		i.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);  
-		PendingIntent contentIntent = PendingIntent.getActivity(
-		        getApplication(),
-		        R.string.app_name,
-		        i,
-		        PendingIntent.FLAG_UPDATE_CURRENT);
-		notification.contentView = new RemoteViews(PlayerActivity.this.getPackageName(), R.layout.notification);
-		notification.contentIntent = contentIntent;
-		controller.changeState(PlayerState.STOP);
+		setController(new PlayerController(this));
+		setupViews();
 	}
 
-    private void FullScreen()
+    private void setWindowProperties()
     {
+    	getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);  
         getWindow().setFlags(~WindowManager.LayoutParams.FLAG_FULLSCREEN,   
         		WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-    }
-    
-    public void setOnSettingClick(View.OnClickListener listener)
-    {
-    	settingButton.setOnClickListener(listener);
-    }
-    
-    public void setOnPlayerClick(View.OnClickListener listener)
-    {
-    	playButton.setOnClickListener(listener);
-    }
-    
-    public void setOnNextClick(View.OnClickListener listener)
-    {
-    	nextButton.setOnClickListener(listener);
-    }
-    
-    public void setOnLoveClick(View.OnClickListener listener)
-    {
-    	loveButton.setOnClickListener(listener);
     }
     
 	@Override
@@ -342,7 +348,7 @@ public class PlayerActivity extends Activity{
 		{
 		case MENU_HATE:
 		{
-			controller.neverPlay();
+			((PlayerController)controller).neverPlay();
 			break;
 		}
 		case MENU_EXIT_PROCESS:
@@ -356,7 +362,7 @@ public class PlayerActivity extends Activity{
 				public void onClick(DialogInterface dialog, int which) {
 					// TODO Auto-generated method stub
 					PlayerActivity.this.finish();
-					controller.closeSongManager();
+					((PlayerController)controller).close();
 					Intent intent = new Intent(getApplicationContext(),PlayerService.class);
 					nm.cancelAll();
 					getApplicationContext().stopService(intent);
@@ -393,7 +399,7 @@ public class PlayerActivity extends Activity{
 		if(resultCode == Activity.RESULT_OK)
 		{
 			Bundle bundle = data.getBundleExtra("bundle"); 
-			this.controller.setUserData(bundle);
+			((PlayerController)controller).setUserData(bundle);
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
@@ -450,6 +456,48 @@ public class PlayerActivity extends Activity{
 			stateHandler.sendMessage(msg);
 		}
 		
+	}
+
+
+
+	@Override
+	protected void setupViews() {
+		// TODO Auto-generated method stub
+		this.playButton 		= (Button)findViewById(R.id.playbtn);
+		this.nextButton 		= (Button)findViewById(R.id.nextbtn);
+		this.settingButton		= (Button)findViewById(R.id.settingBtn);
+		this.waitProgressBar 	= (ProgressBar)findViewById(R.id.waitProgressBar);
+		this.songImageView		= (ImageView)findViewById(R.id.songimageview);
+		this.songTime			= (TextView)findViewById(R.id.songtime);
+		this.songTitle			= (TextView)findViewById(R.id.songtitle);
+		this.musicProgressBar	= (ProgressBar)findViewById(R.id.musicProgressbar);
+		this.loveButton			= (Button)findViewById(R.id.lovebtn);
+		this.nm					= (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+		this.notification 		= new Notification(R.drawable.ic_launcher, "正在播放：", System.currentTimeMillis()); 
+		
+		notification.flags = Notification.FLAG_ONGOING_EVENT;
+		Intent i = new Intent(getApplicationContext(), PlayerActivity.class);
+		i.setAction(Intent.ACTION_MAIN);  
+		i.addCategory(Intent.CATEGORY_LAUNCHER);  
+		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);  
+		i.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);  
+		PendingIntent contentIntent = PendingIntent.getActivity(
+		        getApplication(),
+		        R.string.app_name,
+		        i,
+		        PendingIntent.FLAG_UPDATE_CURRENT);
+		notification.contentView = new RemoteViews(PlayerActivity.this.getPackageName(), R.layout.notification);
+		notification.contentIntent = contentIntent;
+		super.setupViews();
+	}
+
+	@Override
+	protected void setListeners() {
+		// TODO Auto-generated method stub
+		this.playButton.setOnClickListener(startListener);
+		this.nextButton.setOnClickListener(nextListener);
+		this.loveButton.setOnClickListener(loveListener);
+		this.settingButton.setOnClickListener(settingListener);
 	};
 	
 }
