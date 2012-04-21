@@ -10,22 +10,28 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RemoteViews;
@@ -38,8 +44,9 @@ import com.MetroMusic.controller.PlayerController;
 import com.MetroMusic.helper.PlayerState;
 import com.MetroMusic.helper.SongInfomation;
 import com.MetroMusic.helper.SystemState;
+import com.MetroMusic.listener.PlayerAlbumGestureListener;
 import com.MetroMusic.service.PlayerService;
-public class PlayerActivity extends MMAbstractActivity{
+public class PlayerActivity extends MMAbstractActivity implements OnTouchListener{
 
 	/* UIs  */
 	private Button	playButton;
@@ -51,8 +58,11 @@ public class PlayerActivity extends MMAbstractActivity{
 	private TextView 	songTitle;
 	private TextView	songTime;
 	private ProgressBar musicProgressBar;
+	private FrameLayout songImageLayout;
 	private Notification  notification;
-	private NotificationManager nm;   
+	private NotificationManager nm;
+	private GestureDetector mGestureDetector;
+	private PlayerAlbumGestureListener gestureListener;
 	
 	/* Constraint */
 	private final static int MENU_HATE			= 0x01;
@@ -66,7 +76,8 @@ public class PlayerActivity extends MMAbstractActivity{
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
-			((PlayerController)controller).onStart();
+			PlayerController playerController = ((PlayerController)controller);
+			playerController.onStart();
 		}
 	};
 	
@@ -75,7 +86,8 @@ public class PlayerActivity extends MMAbstractActivity{
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
-			((PlayerController)controller).onPause();
+			PlayerController playerController = ((PlayerController)controller);
+			playerController.onPause();
 		}
 	};
 	
@@ -84,7 +96,9 @@ public class PlayerActivity extends MMAbstractActivity{
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
-			((PlayerController)controller).onNext();
+			PlayerController playerController = ((PlayerController)controller);
+			gestureListener.refreshImage();
+			playerController.onNext();
 		}
 	};
 	
@@ -94,7 +108,8 @@ public class PlayerActivity extends MMAbstractActivity{
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
 			loveButton.setEnabled(false);
-			((PlayerController)controller).onLove();
+			PlayerController playerController = ((PlayerController)controller);
+			playerController.onLove();
 		}
 	};
 	
@@ -104,7 +119,8 @@ public class PlayerActivity extends MMAbstractActivity{
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
 			loveButton.setEnabled(false);
-			((PlayerController)controller).onUnLove();
+			PlayerController playerController = ((PlayerController)controller);
+			playerController.onUnLove();
 		}
 	};
 	
@@ -113,12 +129,12 @@ public class PlayerActivity extends MMAbstractActivity{
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
-			((PlayerController)controller).onSetting();
+			PlayerController playerController = ((PlayerController)controller);
+			playerController.onSetting();
 		}
 	};
 	
 	/* *********  */
-
 	private Handler stateHandler = new Handler()
 	{
 		@Override
@@ -138,7 +154,7 @@ public class PlayerActivity extends MMAbstractActivity{
 				playButton.setBackgroundDrawable(res.getDrawable(R.drawable.mp_playbutton_style));
 				playButton.setOnClickListener(startListener);
 				break;
-			}
+			} 
 			case PlayerState.STOP:
 			{
 				playButton.setBackgroundDrawable(res.getDrawable(R.drawable.mp_playbutton_style));
@@ -230,29 +246,42 @@ public class PlayerActivity extends MMAbstractActivity{
 		@Override
 		public void handleMessage(Message msg) {
 			// TODO Auto-generated method stub
-			Resources res = PlayerActivity.this.getResources();
 			switch(msg.what)
 			{
-			case SongInfomation.IMAGE:
+			case SongInfomation.IMAGE: 
+			{
 				Bitmap bitmap = (Bitmap)msg.obj;
-				songImageView.setBackgroundDrawable(res.getDrawable(R.drawable.mp_songimage_style));
 				songImageView.setImageBitmap(bitmap);
+				
+				/**
+				 * Start album image animation
+				 */
 				Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.mp_songimage_animation);
 				songImageView.startAnimation(animation);
 				break;
+			}
 			case SongInfomation.TITLE:
+			{
 				String title  = (String)msg.obj;
+				
+				/**
+				 * Update the song information in activity
+				 */
+				songTitle.setText(title);
+				
 				notification.tickerText = "正在播放："+title;
 				RemoteViews rv	= notification.contentView;
 				rv.setTextViewText(R.id.notificationStatusText, "正在播放："+title);
-				songTitle.setText(title);
-				nm.cancelAll();
+				nm.cancel(R.string.app_name);
 				nm.notify(R.string.app_name, notification);
 				break;
+			}
 			case SongInfomation.TIME:
+			{
 				String time   = (String)msg.obj;
 				songTime.setText("本曲时长："+time);
 				break;
+			}
 			}
 			super.handleMessage(msg);
 		}
@@ -286,7 +315,8 @@ public class PlayerActivity extends MMAbstractActivity{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-    		((PlayerController)controller).setPlayHelper(serviceHelper);
+    		PlayerController playerController = ((PlayerController)controller);
+    		playerController.setPlayHelper(serviceHelper);
     	}  
     	public void onServiceDisconnected(ComponentName className) {  
     		Log.i("Tag","disconnect service");  
@@ -344,11 +374,12 @@ public class PlayerActivity extends MMAbstractActivity{
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		// TODO Auto-generated method stub
-		switch(item.getItemId())
+		switch( item.getItemId() )
 		{
 		case MENU_HATE:
 		{
-			((PlayerController)controller).neverPlay();
+			PlayerController playerController = ((PlayerController)controller);
+			playerController.neverPlay();
 			break;
 		}
 		case MENU_EXIT_PROCESS:
@@ -374,11 +405,11 @@ public class PlayerActivity extends MMAbstractActivity{
 		}
 		case MENU_ABOUT:
 		{
-			Intent intent = new Intent(this,AboutActivity.class);
+			Intent intent = new Intent( this, AboutActivity.class );
 			startActivity(intent);
 		}
 		default:
-			return super.onMenuItemSelected(featureId, item);
+			return super.onMenuItemSelected( featureId, item);
 		}
 		return true;
 	}
@@ -391,15 +422,14 @@ public class PlayerActivity extends MMAbstractActivity{
 		startActivity(home); 
 	}
 	
-	
-
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		if(resultCode == Activity.RESULT_OK)
 		{
 			Bundle bundle = data.getBundleExtra("bundle"); 
-			((PlayerController)controller).setUserData(bundle);
+			PlayerController playerController = ((PlayerController)controller);
+			playerController.setUserData(bundle);
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
@@ -409,7 +439,6 @@ public class PlayerActivity extends MMAbstractActivity{
 	/***
 	 * IPC interface for activity
 	 * @author Coffee
-	 *
 	 */
 	class  UIHelper extends PlayerUIHelper.Stub
 	{
@@ -472,8 +501,15 @@ public class PlayerActivity extends MMAbstractActivity{
 		this.songTitle			= (TextView)findViewById(R.id.songtitle);
 		this.musicProgressBar	= (ProgressBar)findViewById(R.id.musicProgressbar);
 		this.loveButton			= (Button)findViewById(R.id.lovebtn);
+		this.songImageLayout	= (FrameLayout)findViewById(R.id.songimageframe);
 		this.nm					= (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 		this.notification 		= new Notification(R.drawable.ic_launcher, "正在播放：", System.currentTimeMillis()); 
+		
+		this.songImageLayout.setOnTouchListener(this);
+		this.songImageLayout.setLongClickable(true);
+		
+		gestureListener			= new PlayerAlbumGestureListener(songImageView,this);
+		mGestureDetector		= new GestureDetector(gestureListener);
 		
 		notification.flags = Notification.FLAG_ONGOING_EVENT;
 		Intent i = new Intent(getApplicationContext(), PlayerActivity.class);
@@ -498,6 +534,12 @@ public class PlayerActivity extends MMAbstractActivity{
 		this.nextButton.setOnClickListener(nextListener);
 		this.loveButton.setOnClickListener(loveListener);
 		this.settingButton.setOnClickListener(settingListener);
+	}
+
+	@Override
+	public boolean onTouch(View arg0, MotionEvent event) {
+		// TODO Auto-generated method stub
+		return mGestureDetector.onTouchEvent(event); 
 	};
 	
 }

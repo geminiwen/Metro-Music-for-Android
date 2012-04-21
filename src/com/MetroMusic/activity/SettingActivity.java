@@ -8,14 +8,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
-import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
 
-import com.MetroMusic.activity.R;
 import com.MetroMusic.controller.ChannelManager;
 import com.MetroMusic.controller.SettingController;
 import com.MetroMusic.data.Channel;
@@ -51,7 +47,6 @@ public class SettingActivity extends PreferenceActivity implements OnPreferenceC
 		loginPreference			= (LoginPreference)this.findPreference("login_prefer");
 		privateChannelCategory	= (PreferenceCategory)this.findPreference("private_channel");
 		publicChannelCategory	= (PreferenceCategory)this.findPreference("public_channel");
-		
 		loginPreference.setParent(this);
 	}
 	

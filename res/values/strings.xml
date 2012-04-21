@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MetroMusic</string>
-    <string name="app_version">1.0 beta build 12032202</string>
-    <string name="show_version">build 12032202</string>
+    <string name="app_version">1.0 beta build 12041901</string>
+    <string name="show_version">build 12041901</string>
+    <string name="album_image">专辑图片</string>
+    <string name="album_title">没有歌曲播放</string>
+    <string name="album_time">本曲时长： 00:00</string>
 
 </resources>

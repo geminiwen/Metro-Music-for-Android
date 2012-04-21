@@ -6,7 +6,6 @@ import java.net.URI;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteException;
@@ -14,8 +13,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
 import api.Api;
@@ -26,7 +23,6 @@ import com.MetroMusic.aidl.DataHelper;
 import com.MetroMusic.aidl.PlayerServiceHelper;
 import com.MetroMusic.data.Channel;
 import com.MetroMusic.data.Song;
-import com.MetroMusic.handler.AbstractHandlerFactory;
 import com.MetroMusic.helper.AbstractState;
 import com.MetroMusic.helper.PlayerState;
 import com.MetroMusic.helper.SongInfomation;
@@ -81,7 +77,7 @@ public class PlayerController extends MMAbstractController{
 	/* Invoked by activities */
 	public void close()
 	{
-		songManager.closeManager();
+		songManager.clean();
 	}
 	
 	public void neverPlay()
@@ -91,8 +87,8 @@ public class PlayerController extends MMAbstractController{
 			songManager.setOperator(Api.OP_HATE);
 			playerModel.appendHistory(playerModel.getLastSong().getSid(), Api.OP_HATE);
 			playerModel.setStop(true);
-			AbstractState state = new PlayerState(PlayerState.STOP);
-			notify(state,null);
+			AbstractState state = new PlayerState( PlayerState.STOP );
+			notify( state, null );
 			loadNewSong();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
@@ -124,12 +120,19 @@ public class PlayerController extends MMAbstractController{
 					PlayerController.this.notify(state,null);
 					try {
 						song = songManager.loadNewSong();
-						if( song.getIsLike() > 0 ) state = new PlayerState(PlayerState.LOVE);
-						else state = new PlayerState(PlayerState.UNLOVE);
+						
+						if( song.getIsLike() > 0 )
+						{
+							state = new PlayerState(PlayerState.LOVE);
+						} else state = new PlayerState(PlayerState.UNLOVE);
+						
 						PlayerController.this.notify(state,null);
+						
 						imageManager.getImageFromUrlAsync(URI.create(song.getPicture()));
+						
 						songInfomationManager.setSong(song);
-						songInfomationManager.invokeUpdateUI();
+						songInfomationManager.getSongInformation();
+						
 						serviceHelper.playSong(song);
 						state = new PlayerState(PlayerState.PLAY);
 						PlayerController.this.notify(state,null);
@@ -338,7 +341,7 @@ public class PlayerController extends MMAbstractController{
 				imageManager.setOnDownloadCompletionlistener(new ImageDownLoadCompletionImpl());
 				
 				//歌曲名字、歌曲时间数据结构
-				songInfomationManager = new SongInfomationManager(playerActivity.getSongInfomationHandler());
+				songInfomationManager = new SongInfomationManager(playerActivity.getSongInfomationHandler(),activity);
 				
 				userModel	= userManager.getAutoLoginUserFromDB();
 				initSongManager();

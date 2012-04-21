@@ -1,6 +1,7 @@
 package com.MetroMusic.activity;
 
 import android.app.Activity;
+
 import com.MetroMusic.controller.MMAbstractController;
 
 public abstract class MMAbstractActivity extends Activity{

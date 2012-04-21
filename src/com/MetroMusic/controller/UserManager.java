@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.apache.http.client.CookieStore;
-import org.apache.http.cookie.Cookie;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -14,7 +12,6 @@ import android.content.Context;
 import api.Api;
 
 import com.MetroMusic.activity.R;
-import com.MetroMusic.dao.CookieDAO;
 import com.MetroMusic.dao.UserDAO;
 import com.MetroMusic.dbhelper.DataBaseHelper;
 import com.MetroMusic.http.RequestParams;

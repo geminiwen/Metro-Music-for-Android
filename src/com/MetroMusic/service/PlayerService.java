@@ -22,10 +22,10 @@ import com.MetroMusic.helper.PlayerState;
 public class PlayerService extends Service implements OnCompletionListener,OnPreparedListener,OnBufferingUpdateListener,OnErrorListener {
 	
 	private MediaPlayer musicPlayer = new MediaPlayer();
-	private boolean isLoad = false;
-	private DataHelper dataHelper;
-	private Song 	playSong;
-	private PlayerUIHelper playerUIHelper;
+	private boolean			isLoaded = false;
+	private DataHelper		dataHelper;
+	private Song			playSong;
+	private PlayerUIHelper	playerUIHelper;
 	
 	private PlayerServiceHelper.Stub helper = new PlayerServiceHelper.Stub(){
 
@@ -34,7 +34,7 @@ public class PlayerService extends Service implements OnCompletionListener,OnPre
 			// TODO Auto-generated method stub
 			try {
 				playSong = song;
-				isLoad = false;
+				isLoaded = false;
 				playerUIHelper.updateMusicProgress(0);
 				playerUIHelper.updateBufferingProgress(0);
 				musicPlayer.reset();
@@ -65,7 +65,7 @@ public class PlayerService extends Service implements OnCompletionListener,OnPre
 			}
 			else
 			{
-				if(isLoad)
+				if(isLoaded)
 				{
 					musicPlayer.start();
 				}
@@ -110,7 +110,7 @@ public class PlayerService extends Service implements OnCompletionListener,OnPre
 	public void onCreate() {
 
 		// TODO Auto-generated method stub
-		Log.i(PlayerService.class.getName(),"Service start!");
+		Log.i(this.getClass().getName(),"Service start!");
 		musicPlayer.setOnPreparedListener(this);
 		musicPlayer.setOnCompletionListener(this);
 		musicPlayer.setOnErrorListener(this);
@@ -125,6 +125,7 @@ public class PlayerService extends Service implements OnCompletionListener,OnPre
 		t.reset();
 		musicPlayer = null;
 		t.release();
+		Log.i(this.getClass().getName(),"Service Destroy!");
 		super.onDestroy();
 	}
 
@@ -183,7 +184,7 @@ public class PlayerService extends Service implements OnCompletionListener,OnPre
 			e.printStackTrace();
 		}
 		
-		isLoad = true;
+		isLoaded = true;
 	}
 
 	@Override

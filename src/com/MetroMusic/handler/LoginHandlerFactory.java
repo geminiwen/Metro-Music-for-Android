@@ -4,7 +4,6 @@ import android.os.Handler;
 
 import com.MetroMusic.activity.LoginActivity;
 import com.MetroMusic.activity.MMAbstractActivity;
-import com.MetroMusic.activity.PlayerActivity;
 import com.MetroMusic.helper.AbstractState;
 
 public class LoginHandlerFactory extends AbstractHandlerFactory {

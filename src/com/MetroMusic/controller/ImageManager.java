@@ -6,8 +6,6 @@ import java.net.URI;
 
 import android.content.Context;
 
-import com.MetroMusic.http.AsyncHttpClient;
-
 public class ImageManager {
 	private NetworkManager networkManager;
 	private Object mutextObject = new Object();

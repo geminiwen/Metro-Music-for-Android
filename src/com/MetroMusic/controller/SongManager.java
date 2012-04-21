@@ -3,7 +3,6 @@ package com.MetroMusic.controller;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.http.impl.cookie.BasicClientCookie;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,7 +18,6 @@ import com.MetroMusic.data.Song;
 import com.MetroMusic.dbhelper.DataBaseHelper;
 import com.MetroMusic.http.RequestParams;
 import com.MetroMusic.model.PlayerModel;
-import com.MetroMusic.model.UserModel;
 
 public class SongManager {
 	
@@ -119,7 +117,7 @@ public class SongManager {
 		return thisSong;
 	}
 	
-	public void loveSongAsync( final boolean isLove )
+	public void loveSongAsync( final boolean loveit )
 	{
 		new Thread(new Runnable(){
 			@Override
@@ -130,31 +128,18 @@ public class SongManager {
 				params.put("from", "ie9");
 				params.put("sid",thisSong.getSid());
 				String operators = null;
-				if(isLove)
-				{
-					operators = Api.OP_LIKE;
-				}
-				else
-				{
-					operators = Api.OP_CANCEL_LIKE;
-				}
+				operators = loveit ? Api.OP_LIKE : Api.OP_CANCEL_LIKE;
 				params.put("type", operators);
 				params.put("channel", String.valueOf(channelManager.getCurrentChannel().getId()));
 				try {
 					networkManager.executeAndGetJson(Api.API_THIRD_PART_RADIO,params);
-					if(songOpComletelistener!=null)songOpComletelistener.OnCompletion(isLove);
+					if(songOpComletelistener != null ) songOpComletelistener.OnCompletion( loveit );
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		}).start();
-	}
-	
-	public void neverPlayThisSong()
-	{
-		RequestParams params	= new RequestParams();
-		Song		  thisSong	= data.getLastSong();
 	}
 	
 	public ChannelManager getChannelManager()
@@ -176,7 +161,11 @@ public class SongManager {
 		return channelManager.changeChannelByName(channelName);
 	}
 	
-	public void closeManager()
+	/**
+	 * Do something before the manager is close
+	 * 
+	 */
+	public void clean()
 	{
 		networkManager.saveCookie();
 	}
