@@ -7,21 +7,24 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.MetroMusic.activity.R;
 
 public class PlayerAlbumGestureListener implements OnGestureListener {
 
 	private ImageView imageView;
+	private TextView  lrcView;
 	private Context   appContext;
 	
 	/*    data       */
 	private int   	  imgDirection;
 	private boolean	  direction;
 	
-	public PlayerAlbumGestureListener(ImageView _imageView,Context _appContext)
+	public PlayerAlbumGestureListener(ImageView _imageView,TextView _lrcView,Context _appContext)
 	{
 		this.imageView	= _imageView;
+		this.lrcView	= _lrcView;
 		this.appContext	= _appContext;
 		this.imgDirection = 0;
 	}
@@ -70,6 +73,7 @@ public class PlayerAlbumGestureListener implements OnGestureListener {
 	public void refreshImage()
 	{
 		imageView.setVisibility(View.VISIBLE);
+		lrcView.setVisibility(View.INVISIBLE);
 		this.imgDirection = 0;
 	}
 	
@@ -82,6 +86,7 @@ public class PlayerAlbumGestureListener implements OnGestureListener {
 				Animation animation = AnimationUtils.loadAnimation(appContext, R.anim.mp_songimage_gesture1);
 				imageView.startAnimation(animation);
 				imageView.setVisibility(View.INVISIBLE);
+				lrcView.setVisibility(View.VISIBLE);
 				imgDirection = 1;
 			}
 		}
@@ -92,6 +97,7 @@ public class PlayerAlbumGestureListener implements OnGestureListener {
 				Animation animation = AnimationUtils.loadAnimation(appContext, R.anim.mp_songimage_gesture2);
 				imageView.startAnimation(animation);
 				imageView.setVisibility(View.VISIBLE);
+				lrcView.setVisibility(View.INVISIBLE);
 				imgDirection = 0;
 			}
 		}

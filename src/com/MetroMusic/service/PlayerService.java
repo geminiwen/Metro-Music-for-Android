@@ -3,7 +3,10 @@ package com.MetroMusic.service;
 import java.io.IOException;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -18,14 +21,18 @@ import com.MetroMusic.aidl.PlayerServiceHelper;
 import com.MetroMusic.aidl.PlayerUIHelper;
 import com.MetroMusic.data.Song;
 import com.MetroMusic.helper.PlayerState;
+import com.MetroMusic.model.LyricModel;
+import com.MetroMusic.model.SentenceModel;
 
 public class PlayerService extends Service implements OnCompletionListener,OnPreparedListener,OnBufferingUpdateListener,OnErrorListener {
 	
+
 	private MediaPlayer musicPlayer = new MediaPlayer();
 	private boolean			isLoaded = false;
 	private DataHelper		dataHelper;
 	private Song			playSong;
 	private PlayerUIHelper	playerUIHelper;
+	private LyricModel		lyricModel;
 	
 	private PlayerServiceHelper.Stub helper = new PlayerServiceHelper.Stub(){
 
@@ -115,8 +122,13 @@ public class PlayerService extends Service implements OnCompletionListener,OnPre
 		musicPlayer.setOnCompletionListener(this);
 		musicPlayer.setOnErrorListener(this);
 		musicPlayer.setOnBufferingUpdateListener(this);
+		
+		IntentFilter intentFilter = new IntentFilter("lrc");
+		registerReceiver(lrcReceiver,intentFilter);
 		super.onCreate();
 	}
+	
+	
 
 	@Override
 	public void onDestroy() {
@@ -126,6 +138,7 @@ public class PlayerService extends Service implements OnCompletionListener,OnPre
 		musicPlayer = null;
 		t.release();
 		Log.i(this.getClass().getName(),"Service Destroy!");
+		unregisterReceiver(lrcReceiver);
 		super.onDestroy();
 	}
 
@@ -218,8 +231,54 @@ public class PlayerService extends Service implements OnCompletionListener,OnPre
 		}
 	}
 
+	public BroadcastReceiver lrcReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// TODO Auto-generated method stub
+			lyricModel = (LyricModel)intent.getSerializableExtra("lyric");
+			new UpdateLyricThread().start();
+		}
+	};
+	 
 	
-	
+	class UpdateLyricThread extends Thread
+	{
+		long time = 100; // 开始 的时间，不能为零，否则前面几句歌词没有显示出来
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			super.run();
+			while( (musicPlayer != null) && (musicPlayer.isPlaying()) ) 
+			{
+				//musicPlayer.getCurrentPosition();
+				int index = lyricModel.getNowSentenceIndex(time);
+				if(index == -1 )
+				{
+					continue;
+				}
+				SentenceModel sen = lyricModel.getSentenceList().get(index);
+				long sleeptime = sen.getDuring();
+				
+				try {
+					playerUIHelper.updateLrctime(time);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				time += sleeptime;
+				if (sleeptime == -1)
+					return;
+				try {
+					Thread.sleep(sleeptime);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+	}
 	
 
 }

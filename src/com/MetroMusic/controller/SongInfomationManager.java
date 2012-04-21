@@ -4,6 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -22,13 +26,14 @@ import android.util.Log;
 
 import com.MetroMusic.data.Song;
 import com.MetroMusic.helper.SongInfomation;
+import com.MetroMusic.model.SentenceModel;
 import com.MetroMusic.util.LrcUtil;
 
 public class SongInfomationManager {
 	private Handler uiHandler;
 	private NetworkManager networkManager;
 	private Song    song;
-	private OnLrcDownloadCompletionListener lrcListener;
+	private OnLrcListener lrcListener;
 	
 	public SongInfomationManager(Handler handler,Context context)
 	{
@@ -65,10 +70,28 @@ public class SongInfomationManager {
 		getSongLRCAsync();
 	}
 	
-	public static interface OnLrcDownloadCompletionListener
+	public static interface OnLrcListener
 	{
-		void onCompletion(String result);
+		/***
+		 * Call when completed download the lrc, you should not modify the result in the callback;
+		 * @param result the lrc string
+		 */
+		void onDownloadCompletion(String result);
+		
+		
+		/***
+		 * Call when completed parse the lrc and the list given to show the sentences of the song;
+		 * @param sentenceList
+		 */
+		void onPareseCompletion(List<SentenceModel> sentenceList);
+		
 	}
+	
+	public void setLrcListener(OnLrcListener l)
+	{
+		this.lrcListener = l;
+	}
+	
 	
 	public void getSongLRCAsync()
 	{
@@ -79,7 +102,7 @@ public class SongInfomationManager {
 				// TODO Auto-generated method stub
 				final String searchPathFormat = "http://ttlrcct2.qianqian.com/dll/lyricsvr.dll?sh?Artist=artist&Title=titleFlags=0";
 				final String downloadPathFormat = "http://ttlrcct2.qianqian.com/dll/lyricsvr.dll?dl?Id=sId&Code=sCode";
-				String result = "未找到匹配的歌词!";
+				String result = "";
 				LrcUtil lrcHelper = new LrcUtil();
 				String title	= lrcHelper.getUNICODE(song.getTitle()).toString();
 				String artist	= lrcHelper.getUNICODE(song.getArtist()).toString();
@@ -111,11 +134,13 @@ public class SongInfomationManager {
 						     String data;
 						     while( (data = br.readLine()) != null )
 						     {
-						    	 sb.append(data + "\n");
+						    	 sb.append(data);
 						     }
 						     result = sb.toString();  // 根据下载路径下载歌词
 						     Log.v("lrc", result);
-						     if(lrcListener != null)lrcListener.onCompletion(result);
+						     if(lrcListener != null)lrcListener.onDownloadCompletion(result);
+						     List<SentenceModel> list = lrcHelper.parseLrc(result,song);
+						     if(lrcListener != null)lrcListener.onPareseCompletion(list);
 						     return;
 						}
 					}
@@ -132,4 +157,6 @@ public class SongInfomationManager {
 			}
 		}).start();
 	}
+	
+	
 }

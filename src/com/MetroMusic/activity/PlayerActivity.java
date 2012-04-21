@@ -5,15 +5,15 @@ import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -45,7 +45,9 @@ import com.MetroMusic.helper.PlayerState;
 import com.MetroMusic.helper.SongInfomation;
 import com.MetroMusic.helper.SystemState;
 import com.MetroMusic.listener.PlayerAlbumGestureListener;
+import com.MetroMusic.model.LyricModel;
 import com.MetroMusic.service.PlayerService;
+import com.MetroMusic.view.LrcView;
 public class PlayerActivity extends MMAbstractActivity implements OnTouchListener{
 
 	/* UIs  */
@@ -59,6 +61,7 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 	private TextView	songTime;
 	private ProgressBar musicProgressBar;
 	private FrameLayout songImageLayout;
+	private LrcView	lyricView;
 	private Notification  notification;
 	private NotificationManager nm;
 	private GestureDetector mGestureDetector;
@@ -167,6 +170,7 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 				playButton.setEnabled(false);
 				nextButton.setEnabled(false);
 				loveButton.setEnabled(false);
+				lyricView.setLyric(null);
 				break;
 			}
 			case PlayerState.READY:
@@ -216,6 +220,13 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 			{
 				loveButton.setEnabled(false);
 			}
+			case PlayerState.LRC_UPDATE:
+			{
+				long time = (Long)msg.obj;
+				lyricView.updateIndex(time);
+				lyricView.invalidate();
+			}
+			
 			}
 			super.handleMessage(msg);
 		}
@@ -351,6 +362,8 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 		// TODO Auto-generated method stub
 		Intent serviceIntent = new Intent(getApplicationContext(),PlayerService.class);
 		bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
+		IntentFilter intentFilter = new IntentFilter("lrc");
+		registerReceiver(lrcReceiver,intentFilter);
 		super.onStart();
 	}
 
@@ -358,6 +371,7 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 	protected void onStop() {
 		// TODO Auto-generated method stub
 		PlayerActivity.this.unbindService(mConnection);
+		unregisterReceiver(lrcReceiver);
 		super.onStop();
 	}
 
@@ -442,6 +456,7 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 	 */
 	class  UIHelper extends PlayerUIHelper.Stub
 	{
+		
 		@Override
 		public void showWaitBar(boolean show) throws RemoteException {
 			// TODO Auto-generated method stub
@@ -484,6 +499,15 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 			msg.arg1	= position;
 			stateHandler.sendMessage(msg);
 		}
+
+		@Override
+		public void updateLrctime(long time) throws RemoteException {
+			// TODO Auto-generated method stub
+			Message msg = stateHandler.obtainMessage();
+			msg.what	= PlayerState.LRC_UPDATE;
+			msg.obj		= time;
+			stateHandler.sendMessage(msg);
+		}
 		
 	}
 
@@ -502,13 +526,15 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 		this.musicProgressBar	= (ProgressBar)findViewById(R.id.musicProgressbar);
 		this.loveButton			= (Button)findViewById(R.id.lovebtn);
 		this.songImageLayout	= (FrameLayout)findViewById(R.id.songimageframe);
+		this.lyricView			= (LrcView)findViewById(R.id.lrctextview);
+		
 		this.nm					= (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-		this.notification 		= new Notification(R.drawable.ic_launcher, "正在播放：", System.currentTimeMillis()); 
+		this.notification 		= new Notification(R.drawable.ic_launcher, "正在播放：", System.currentTimeMillis());
 		
 		this.songImageLayout.setOnTouchListener(this);
 		this.songImageLayout.setLongClickable(true);
 		
-		gestureListener			= new PlayerAlbumGestureListener(songImageView,this);
+		gestureListener			= new PlayerAlbumGestureListener(songImageView,lyricView,this);
 		mGestureDetector		= new GestureDetector(gestureListener);
 		
 		notification.flags = Notification.FLAG_ONGOING_EVENT;
@@ -542,4 +568,15 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 		return mGestureDetector.onTouchEvent(event); 
 	};
 	
+	private BroadcastReceiver lrcReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// TODO Auto-generated method stub
+			LyricModel lyric = (LyricModel)intent.getSerializableExtra("lyric");
+			lyricView.setLyric(lyric);
+			
+		}
+		
+	};
 }

@@ -3,6 +3,7 @@ package com.MetroMusic.controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -27,7 +28,9 @@ import com.MetroMusic.helper.AbstractState;
 import com.MetroMusic.helper.PlayerState;
 import com.MetroMusic.helper.SongInfomation;
 import com.MetroMusic.helper.SystemState;
+import com.MetroMusic.model.LyricModel;
 import com.MetroMusic.model.PlayerModel;
+import com.MetroMusic.model.SentenceModel;
 import com.MetroMusic.model.UserModel;
 
 
@@ -132,6 +135,7 @@ public class PlayerController extends MMAbstractController{
 						
 						songInfomationManager.setSong(song);
 						songInfomationManager.getSongInformation();
+						
 						
 						serviceHelper.playSong(song);
 						state = new PlayerState(PlayerState.PLAY);
@@ -306,6 +310,26 @@ public class PlayerController extends MMAbstractController{
 		}
 		
 	}
+	
+	class LyricListener implements SongInfomationManager.OnLrcListener
+	{
+
+		@Override
+		public void onDownloadCompletion(String result) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onPareseCompletion(List<SentenceModel> sentenceList) {
+			// TODO Auto-generated method stub
+			LyricModel model = new LyricModel(sentenceList);
+			Intent intent=new Intent("lrc");
+			intent.putExtra("lyric", model);
+			activity.sendBroadcast(intent);
+		}
+		
+	}
 
 	@Override
 	public void onBind() {
@@ -342,7 +366,7 @@ public class PlayerController extends MMAbstractController{
 				
 				//歌曲名字、歌曲时间数据结构
 				songInfomationManager = new SongInfomationManager(playerActivity.getSongInfomationHandler(),activity);
-				
+				songInfomationManager.setLrcListener(new LyricListener());
 				userModel	= userManager.getAutoLoginUserFromDB();
 				initSongManager();
 				SharedPreferences sharedPrefer = playerActivity.getSharedPreferences("CHANNEL", Activity.MODE_PRIVATE);  

@@ -6,4 +6,5 @@ interface PlayerUIHelper
 	void setMusicProgressBarMax(int max);
 	void updateMusicProgress(int position);
 	void updateBufferingProgress(int position);
+	void updateLrctime(long time);
 }

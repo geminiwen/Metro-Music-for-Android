@@ -13,6 +13,7 @@ public class PlayerState extends AbstractState{
 	public final static int PROGRESS 		= 0x06;
 	public final static int PROGRESS_MAX	= 0x07;
 	public final static int BUFFERING		= 0x08;
+	public final static int LRC_UPDATE		= 0x0d;
 	public final static int LOVE			= 0x09;
 	public final static int UNLOVE			= 0x0a; 
 	public final static int DISABLE_LOVE	= 0x0b;
