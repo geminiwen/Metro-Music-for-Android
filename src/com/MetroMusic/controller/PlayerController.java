@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
 import api.Api;
+import api.BroadcastCode;
 
 import com.MetroMusic.activity.PlayerActivity;
 import com.MetroMusic.activity.SettingActivity;
@@ -324,7 +325,7 @@ public class PlayerController extends MMAbstractController{
 		public void onPareseCompletion(List<SentenceModel> sentenceList) {
 			// TODO Auto-generated method stub
 			LyricModel model = new LyricModel(sentenceList);
-			Intent intent=new Intent("lrc");
+			Intent intent=new Intent(BroadcastCode.DOWNLOAD_LRC);
 			intent.putExtra("lyric", model);
 			activity.sendBroadcast(intent);
 		}

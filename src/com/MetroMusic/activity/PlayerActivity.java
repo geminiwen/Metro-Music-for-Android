@@ -37,6 +37,7 @@ import android.widget.ProgressBar;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
+import api.BroadcastCode;
 
 import com.MetroMusic.aidl.PlayerServiceHelper;
 import com.MetroMusic.aidl.PlayerUIHelper;
@@ -66,6 +67,9 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 	private NotificationManager nm;
 	private GestureDetector mGestureDetector;
 	private PlayerAlbumGestureListener gestureListener;
+	
+	/* BroadcastReceivers */
+	private BroadcastReceiver lrcReceiver;
 	
 	/* Constraint */
 	private final static int MENU_HATE			= 0x01;
@@ -170,7 +174,8 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 				playButton.setEnabled(false);
 				nextButton.setEnabled(false);
 				loveButton.setEnabled(false);
-				lyricView.setLyric(null);
+				
+				lyricView.clear(); // Clear lrc view
 				break;
 			}
 			case PlayerState.READY:
@@ -191,6 +196,8 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 			{
 				int position = msg.arg1;
 				musicProgressBar.setProgress(position);
+				lyricView.updateIndex(position < 1 ? 100 : position * 1000);
+				
 				break;
 			}
 			case PlayerState.BUFFERING:
@@ -219,14 +226,8 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 			case PlayerState.DISABLE_LOVE:
 			{
 				loveButton.setEnabled(false);
+				break;
 			}
-			case PlayerState.LRC_UPDATE:
-			{
-				long time = (Long)msg.obj;
-				lyricView.updateIndex(time);
-				lyricView.invalidate();
-			}
-			
 			}
 			super.handleMessage(msg);
 		}
@@ -347,6 +348,7 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 		setContentView(R.layout.player);
 		setController(new PlayerController(this));
 		setupViews();
+		setupBroadcastReceiver();
 	}
 
     private void setWindowProperties()
@@ -362,8 +364,10 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 		// TODO Auto-generated method stub
 		Intent serviceIntent = new Intent(getApplicationContext(),PlayerService.class);
 		bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
-		IntentFilter intentFilter = new IntentFilter("lrc");
+		
+		IntentFilter intentFilter = new IntentFilter(BroadcastCode.DOWNLOAD_LRC);
 		registerReceiver(lrcReceiver,intentFilter);
+		
 		super.onStart();
 	}
 
@@ -371,7 +375,9 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 	protected void onStop() {
 		// TODO Auto-generated method stub
 		PlayerActivity.this.unbindService(mConnection);
+		
 		unregisterReceiver(lrcReceiver);
+		
 		super.onStop();
 	}
 
@@ -411,6 +417,7 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 					Intent intent = new Intent(getApplicationContext(),PlayerService.class);
 					nm.cancelAll();
 					getApplicationContext().stopService(intent);
+					
 				}
 	        })
 	        .setNegativeButton("否",null)
@@ -456,19 +463,11 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 	 */
 	class  UIHelper extends PlayerUIHelper.Stub
 	{
-		
 		@Override
 		public void showWaitBar(boolean show) throws RemoteException {
 			// TODO Auto-generated method stub
 			Message msg = stateHandler.obtainMessage();
-			if(show)
-			{
-				msg.what = PlayerState.WAIT;
-			}
-			else
-			{
-				msg.what = PlayerState.READY;
-			}
+			msg.what = show ? PlayerState.WAIT : PlayerState.READY;
 			stateHandler.sendMessage(msg);
 		}
 
@@ -527,7 +526,7 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 		this.loveButton			= (Button)findViewById(R.id.lovebtn);
 		this.songImageLayout	= (FrameLayout)findViewById(R.id.songimageframe);
 		this.lyricView			= (LrcView)findViewById(R.id.lrctextview);
-		
+
 		this.nm					= (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 		this.notification 		= new Notification(R.drawable.ic_launcher, "正在播放：", System.currentTimeMillis());
 		
@@ -537,6 +536,9 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 		gestureListener			= new PlayerAlbumGestureListener(songImageView,lyricView,this);
 		mGestureDetector		= new GestureDetector(gestureListener);
 		
+		/***
+		 * 初始化通知栏
+		 */
 		notification.flags = Notification.FLAG_ONGOING_EVENT;
 		Intent i = new Intent(getApplicationContext(), PlayerActivity.class);
 		i.setAction(Intent.ACTION_MAIN);  
@@ -552,6 +554,21 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 		notification.contentIntent = contentIntent;
 		super.setupViews();
 	}
+	
+	protected void setupBroadcastReceiver()
+	{
+		lrcReceiver = new BroadcastReceiver()
+		{
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				// TODO Auto-generated method stub
+				LyricModel lyric = (LyricModel)intent.getSerializableExtra("lyric");
+				lyricView.setLyric(lyric);
+				
+			}
+			
+		};
+	}
 
 	@Override
 	protected void setListeners() {
@@ -562,21 +579,15 @@ public class PlayerActivity extends MMAbstractActivity implements OnTouchListene
 		this.settingButton.setOnClickListener(settingListener);
 	}
 
+	/***
+	 * 识别滑动手势
+	 */
 	@Override
 	public boolean onTouch(View arg0, MotionEvent event) {
 		// TODO Auto-generated method stub
 		return mGestureDetector.onTouchEvent(event); 
 	};
 	
-	private BroadcastReceiver lrcReceiver = new BroadcastReceiver()
-	{
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			// TODO Auto-generated method stub
-			LyricModel lyric = (LyricModel)intent.getSerializableExtra("lyric");
-			lyricView.setLyric(lyric);
-			
-		}
-		
-	};
+	
+	
 }

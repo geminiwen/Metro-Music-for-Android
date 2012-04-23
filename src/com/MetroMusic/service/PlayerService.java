@@ -1,12 +1,10 @@
 package com.MetroMusic.service;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -15,25 +13,26 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
+import api.BroadcastCode;
 
 import com.MetroMusic.aidl.DataHelper;
 import com.MetroMusic.aidl.PlayerServiceHelper;
 import com.MetroMusic.aidl.PlayerUIHelper;
 import com.MetroMusic.data.Song;
 import com.MetroMusic.helper.PlayerState;
-import com.MetroMusic.model.LyricModel;
-import com.MetroMusic.model.SentenceModel;
 
 public class PlayerService extends Service implements OnCompletionListener,OnPreparedListener,OnBufferingUpdateListener,OnErrorListener {
 	
 
-	private MediaPlayer musicPlayer = new MediaPlayer();
-	private boolean			isLoaded = false;
-	private DataHelper		dataHelper;
-	private Song			playSong;
-	private PlayerUIHelper	playerUIHelper;
-	private LyricModel		lyricModel;
+	private MediaPlayer musicPlayer = new MediaPlayer(); // 音乐播放器实例
+	private boolean			isLoaded = false;	// 判断是否加载完成
+	private DataHelper		dataHelper;			// IPC中 数据接口
+	private Song			playSong;			// 正在播放的曲目
+	private PlayerUIHelper	playerUIHelper;		// IPC中更改UI的接口实现类
 	
+	/***
+	 * 在Activity中调用的远程方法类
+	 */
 	private PlayerServiceHelper.Stub helper = new PlayerServiceHelper.Stub(){
 
 		@Override
@@ -68,6 +67,7 @@ public class PlayerService extends Service implements OnCompletionListener,OnPre
 				if(musicPlayer.isPlaying())
 				{
 					musicPlayer.pause();
+					PlayerService.this.stateChanged(BroadcastCode.PLAYER_STATECHANGED, null);
 				}
 			}
 			else
@@ -75,6 +75,7 @@ public class PlayerService extends Service implements OnCompletionListener,OnPre
 				if(isLoaded)
 				{
 					musicPlayer.start();
+					PlayerService.this.stateChanged(BroadcastCode.PLAYER_STATECHANGED, null);
 				}
 			}
 		}
@@ -122,9 +123,7 @@ public class PlayerService extends Service implements OnCompletionListener,OnPre
 		musicPlayer.setOnCompletionListener(this);
 		musicPlayer.setOnErrorListener(this);
 		musicPlayer.setOnBufferingUpdateListener(this);
-		
-		IntentFilter intentFilter = new IntentFilter("lrc");
-		registerReceiver(lrcReceiver,intentFilter);
+	
 		super.onCreate();
 	}
 	
@@ -134,11 +133,12 @@ public class PlayerService extends Service implements OnCompletionListener,OnPre
 	public void onDestroy() {
 		// TODO Auto-generated method stub
 		MediaPlayer t = musicPlayer;
-		t.reset();
 		musicPlayer = null;
+		
+		
+		t.reset();
 		t.release();
 		Log.i(this.getClass().getName(),"Service Destroy!");
-		unregisterReceiver(lrcReceiver);
 		super.onDestroy();
 	}
 
@@ -154,6 +154,7 @@ public class PlayerService extends Service implements OnCompletionListener,OnPre
 		// TODO Auto-generated method stub
 		try {
 			dataHelper.nextSong();
+			this.stateChanged(BroadcastCode.PLAYER_STATECHANGED, null);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -166,21 +167,24 @@ public class PlayerService extends Service implements OnCompletionListener,OnPre
 		Log.i(PlayerService.class.getName(),"load song completed!");
 		try {
 			playerUIHelper.setMusicProgressBarMax(playSong.getLength());
+			
 			mp.start();
+			stateChanged(BroadcastCode.PLAYER_STATECHANGED,null);
+			
 			playerUIHelper.showWaitBar(false);
 			new Thread( new Runnable(){
 
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
-					while (musicPlayer!=null) {
+					while (musicPlayer!=null ) {
 						try {
-							if(musicPlayer.isPlaying())
+							if( musicPlayer.isPlaying() )
 							{
 								int position = musicPlayer.getCurrentPosition()/1000;
 								playerUIHelper.updateMusicProgress(position);
 							}
-							Thread.sleep(1000);
+							Thread.sleep(700);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -200,6 +204,13 @@ public class PlayerService extends Service implements OnCompletionListener,OnPre
 		isLoaded = true;
 	}
 
+	private void stateChanged(String state,Serializable extra)
+	{
+		Intent intent = new Intent(state);
+		if(extra != null )intent.putExtra("extra", extra);
+		this.sendBroadcast(intent);
+	}
+	
 	@Override
 	public void onBufferingUpdate(MediaPlayer mp, int arg1) {
 		// TODO Auto-generated method stub
@@ -230,55 +241,5 @@ public class PlayerService extends Service implements OnCompletionListener,OnPre
 			return false;
 		}
 	}
-
-	public BroadcastReceiver lrcReceiver = new BroadcastReceiver()
-	{
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			// TODO Auto-generated method stub
-			lyricModel = (LyricModel)intent.getSerializableExtra("lyric");
-			new UpdateLyricThread().start();
-		}
-	};
-	 
-	
-	class UpdateLyricThread extends Thread
-	{
-		long time = 100; // 开始 的时间，不能为零，否则前面几句歌词没有显示出来
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			super.run();
-			while( (musicPlayer != null) && (musicPlayer.isPlaying()) ) 
-			{
-				//musicPlayer.getCurrentPosition();
-				int index = lyricModel.getNowSentenceIndex(time);
-				if(index == -1 )
-				{
-					continue;
-				}
-				SentenceModel sen = lyricModel.getSentenceList().get(index);
-				long sleeptime = sen.getDuring();
-				
-				try {
-					playerUIHelper.updateLrctime(time);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				time += sleeptime;
-				if (sleeptime == -1)
-					return;
-				try {
-					Thread.sleep(sleeptime);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		
-	}
-	
 
 }

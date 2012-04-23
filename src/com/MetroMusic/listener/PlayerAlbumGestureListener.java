@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -14,14 +15,15 @@ import com.MetroMusic.activity.R;
 public class PlayerAlbumGestureListener implements OnGestureListener {
 
 	private ImageView imageView;
-	private TextView  lrcView;
+	private View  lrcView;
 	private Context   appContext;
 	
 	/*    data       */
 	private int   	  imgDirection;
 	private boolean	  direction;
+	private Animation fadeInAnimation,fadeOutAnimation;
 	
-	public PlayerAlbumGestureListener(ImageView _imageView,TextView _lrcView,Context _appContext)
+	public PlayerAlbumGestureListener(ImageView _imageView,View _lrcView,Context _appContext)
 	{
 		this.imageView	= _imageView;
 		this.lrcView	= _lrcView;
@@ -86,6 +88,9 @@ public class PlayerAlbumGestureListener implements OnGestureListener {
 				Animation animation = AnimationUtils.loadAnimation(appContext, R.anim.mp_songimage_gesture1);
 				imageView.startAnimation(animation);
 				imageView.setVisibility(View.INVISIBLE);
+				fadeInAnimation = new AlphaAnimation(0.0f, 1.0f);
+				fadeInAnimation.setDuration(500);
+				lrcView.setAnimation(fadeInAnimation);
 				lrcView.setVisibility(View.VISIBLE);
 				imgDirection = 1;
 			}
@@ -97,6 +102,9 @@ public class PlayerAlbumGestureListener implements OnGestureListener {
 				Animation animation = AnimationUtils.loadAnimation(appContext, R.anim.mp_songimage_gesture2);
 				imageView.startAnimation(animation);
 				imageView.setVisibility(View.VISIBLE);
+				fadeOutAnimation = new AlphaAnimation(1.0f,0.0f);
+				fadeOutAnimation.setDuration(500);
+				lrcView.setAnimation(fadeOutAnimation);
 				lrcView.setVisibility(View.INVISIBLE);
 				imgDirection = 0;
 			}

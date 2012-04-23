@@ -1,3 +1,7 @@
+2012-04-23
+build 2012042301
+1、重写lrcview为scrollview。利用Scroller进行自动滚动。解决了之前的难题。 （感谢 yoyoplayer提供解析lrc的思路）
+
 2012-04-22
 build 2012042201
 1、增加滚动lrc功能（完全自定义view。还有很多bug，比如不能暂停)r

@@ -38,6 +38,7 @@
 	                android:layout_height="200dip"
 	                android:id="@+id/lrctextview"
 	                android:visibility="invisible"
+	                android:scrollbars="none"
 	                />
 	                
 	            
